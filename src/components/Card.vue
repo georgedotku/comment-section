@@ -44,4 +44,26 @@
 import { Reply } from 'lucide-vue-next';
 import { ref } from 'vue';
 const count = ref(0);
+const user = ref([
+  {
+    name: 'Susan',
+    avatar: 'https://i.pravatar.cc/300',
+    time: '2 weeks ago',
+  },
+  {
+    name: 'Henry',
+    avatar: 'https://i.pravatar.cc/300',
+    time: '1 week ago',
+  },
+  {
+    name: 'Gideon',
+    avatar: 'https://i.pravatar.cc/300',
+    time: '3 days ago',
+  },
+  {
+    name: 'Rophi',
+    avatar: 'https://i.pravatar.cc/300',
+    time: '5 hours ago',
+  },
+]);
 </script>
