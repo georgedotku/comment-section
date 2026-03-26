@@ -4,15 +4,13 @@
     <div class="flex items-center gap-3">
       <!-- Avatar -->
       <img
-        src="https://i.pravatar.cc/300"
+        src="https://i.pravatar.cc/100"
         alt="img"
         class="h-12 w-12 mb-auto rounded-full transition-transform duration-200 hover:scale-105 active:scale-95" />
-
       <!-- Input -->
       <textarea
         placeholder="Add a comment"
         class="flex-1 min-w-0 h-20 px-3 outline outline-2 outline-gray-500/30 rounded-lg"></textarea>
-
       <!-- Button -->
       <button
         type="submit"
