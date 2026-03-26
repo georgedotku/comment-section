@@ -1,7 +1,7 @@
 <template>
   <div class="bg-[#E7EDE7] w-full h-full">
     <div
-      class="flex flex-col gap-4 justify-start w-1/2 m-auto items-center pt-10">
+      class="flex flex-col gap-4 justify-start w-1/2 mx-auto mb-4 border items-center pt-10">
       <Card :user="user" />
       <ReplyCard :user="user" />
       <CommentBox />
