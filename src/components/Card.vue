@@ -3,7 +3,7 @@
   <div
     v-for="user in user"
     :key="user.id"
-    class="bg-white p-4 w-1/2 h-40 relative rounded-lg shadow-md">
+    class="bg-white p-4 w-full h-40 relative rounded-lg shadow-md">
     <!-- Button Container -->
     <div
       class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 space-y-0.5 rounded">
@@ -21,10 +21,10 @@
       <img
         :src="user.avatar"
         alt="img"
-        className="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105 group-active:scale-95" />
-      <div className="flex gap-2 mb-2 sm:items-start">
-        <p className="font-medium">{{ user.name }}</p>
-        <p className="text-muted-foreground font-medium opacity-30">
+        class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105 group-active:scale-95" />
+      <div class="flex gap-2 mb-2 sm:items-start">
+        <p class="font-medium">{{ user.name }}</p>
+        <p class="text-muted-foreground font-medium opacity-30">
           {{ user.time }}
         </p>
       </div>
