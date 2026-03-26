@@ -58,8 +58,11 @@
         src="https://i.pravatar.cc/200"
         alt="img"
         class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105 group-active:scale-95" />
-      <div class="flex gap-2 mb-2 sm:items-start">
-        <p class="font-medium">Mr Rophi</p>
+      <div class="flex gap-3 mb-2 sm:items-start">
+        <p class="font-medium">Ms Judith</p>
+        <span class="bg-blue-500 text-white font-medium px-2 pb-1 rounded"
+          >you</span
+        >
         <p class="text-muted-foreground font-medium opacity-30">2 days ago</p>
       </div>
       <span class="flex font-bold text-blue-500 absolute top-2 right-4">
@@ -82,7 +85,9 @@
 </template>
 
 <script setup>
-import { Edit2, Trash2 } from 'lucide-vue-next';
+import { Reply } from 'lucide-vue-next';
+import { Edit2 } from 'lucide-vue-next';
+import { Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 const count = ref(0);
 </script>

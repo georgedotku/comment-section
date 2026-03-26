@@ -34,7 +34,7 @@
     </div>
     <!-- Comment -->
     <div class="flex absolute top-18 mx-10 text-justify">
-      <p class="text-gray-700 font-medium opacity-60">
+      <p class="text-gray-500 font-medium">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde quibusdam
         eius tempore porro ad. Fugit doloribus mollitia dolor eius odio quisquam
         rerum ratione error. Quibusdam labore nisi iusto magnam dicta?
