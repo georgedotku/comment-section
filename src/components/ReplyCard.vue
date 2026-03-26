@@ -29,10 +29,11 @@
     </div>
     <!-- Comment -->
     <div class="flex w-[89%] ms-8 absolute top-18 mx-10 text-justify">
-      <p class="text-gray-700 font-medium opacity-60">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde quibusdam
-        eius tempore porro ad. Fugit doloribus mollitia dolor eius odio quisquam
-        rerum ratione error. Quibusdam labore nisi iusto magnam dicta?
+      <p class="text-gray-500 font-medium">
+        <span class="text-blue-700">@Ms Susan</span> sit amet consectetur
+        adipisicing elit. Unde quibusdam eius tempore porro ad. Fugit doloribus
+        mollitia dolor eius odio quisquam rerum ratione error. Quibusdam labore
+        nisi iusto magnam dicta?
       </p>
     </div>
   </div>
@@ -59,7 +60,7 @@
         class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105 group-active:scale-95" />
       <div class="flex gap-2 mb-2 sm:items-start">
         <p class="font-medium">Mr Rophi</p>
-        <p class="text-muted-foreground font-medium opacity-30">2 weeks ago</p>
+        <p class="text-muted-foreground font-medium opacity-30">2 days ago</p>
       </div>
       <span class="flex font-bold text-blue-500 absolute top-2 right-4">
         <Reply class="w-6 h-6 font-bold" /> Reply
@@ -67,11 +68,11 @@
     </div>
     <!-- Comment -->
     <div class="flex w-[89%] ms-8 absolute top-18 mx-10 text-justify">
-      <p class="text-gray-700 font-medium opacity-60">
-        <span class="text-blue-500/100">Lorem ipsum dolor </span>sit amet
-        consectetur adipisicing elit. Unde quibusdam eius tempore porro ad.
-        Fugit doloribus mollitia dolor eius odio quisquam rerum ratione error.
-        Quibusdam labore nisi iusto magnam dicta?
+      <p class="text-gray-500 font-medium">
+        <span class="text-blue-700">@Ms Susan</span> sit amet consectetur
+        adipisicing elit. Unde quibusdam eius tempore porro ad. Fugit doloribus
+        mollitia dolor eius odio quisquam rerum ratione error. Quibusdam labore
+        nisi iusto magnam dicta?
       </p>
     </div>
   </div>
