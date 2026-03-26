@@ -1,6 +1,9 @@
 <template>
   <!-- Card -->
-  <div class="bg-white p-4 w-1/2 h-40 relative rounded-lg shadow-md">
+  <div
+    v-for="user in user"
+    :key="user.id"
+    class="bg-white p-4 w-1/2 h-40 relative rounded-lg shadow-md">
     <!-- Button Container -->
     <div
       class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 space-y-0.5 rounded">
@@ -16,13 +19,13 @@
     <div
       className="group flex mx-10 absolute top-4 left-4 w-[90%] items-center gap-2 sm:flex-row sm:gap-4">
       <img
-        src="https://i.pravatar.cc/300"
+        :src="user.avatar"
         alt="img"
         className="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105 group-active:scale-95" />
       <div className="flex gap-2 mb-2 sm:items-start">
-        <p className="font-medium">Susan</p>
+        <p className="font-medium">{{ user.name }}</p>
         <p className="text-muted-foreground font-medium opacity-30">
-          2 weeks ago
+          {{ user.time }}
         </p>
       </div>
       <span class="flex font-bold text-blue-500 absolute top-2 right-4">
@@ -44,26 +47,10 @@
 import { Reply } from 'lucide-vue-next';
 import { ref } from 'vue';
 const count = ref(0);
-const user = ref([
-  {
-    name: 'Susan',
-    avatar: 'https://i.pravatar.cc/300',
-    time: '2 weeks ago',
+const props = defineProps({
+  user: {
+    type: Array,
+    required: true,
   },
-  {
-    name: 'Henry',
-    avatar: 'https://i.pravatar.cc/300',
-    time: '1 week ago',
-  },
-  {
-    name: 'Gideon',
-    avatar: 'https://i.pravatar.cc/300',
-    time: '3 days ago',
-  },
-  {
-    name: 'Rophi',
-    avatar: 'https://i.pravatar.cc/300',
-    time: '5 hours ago',
-  },
-]);
+});
 </script>
