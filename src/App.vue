@@ -3,7 +3,7 @@
     <div
       class="flex flex-col gap-4 justify-start w-1/2 mx-auto py-4 items-center">
       <Card :user="user" />
-      <ReplyCard :user="user" />
+      <ReplyCard />
       <CommentBox />
     </div>
   </div>
