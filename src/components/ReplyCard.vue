@@ -63,7 +63,10 @@
         <p class="text-muted-foreground font-medium opacity-30">2 days ago</p>
       </div>
       <span class="flex font-bold text-blue-500 absolute top-2 right-4">
-        <Reply class="w-6 h-6 font-bold" /> Reply
+        <Edit2 class="w-5 h-5 font-bold" /> Edit
+      </span>
+      <span class="flex font-bold text-red-500 absolute top-2 right-20">
+        <Trash2 class="w-5 h-5 font-bold" /> Delete
       </span>
     </div>
     <!-- Comment -->
@@ -79,7 +82,7 @@
 </template>
 
 <script setup>
-import { Reply } from 'lucide-vue-next';
+import { Edit2, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 const count = ref(0);
 </script>
