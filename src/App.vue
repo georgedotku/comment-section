@@ -19,12 +19,16 @@ const user = ref([
     name: 'Mr Henry',
     avatar: 'https://i.pravatar.cc/200',
     time: '2 weeks ago',
+    comment:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, doloremque. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, doloremque.',
   },
   {
     id: 2,
     name: 'Ms Susan',
     avatar: 'https://i.pravatar.cc/300',
     time: '1 week ago',
+    comment:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, doloremque. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, doloremque.',
   },
 ]);
 </script>

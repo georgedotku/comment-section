@@ -10,7 +10,7 @@
       <!-- Input -->
       <textarea
         placeholder="Add a comment"
-        class="flex-1 min-w-0 h-20 px-3 outline outline-2 outline-gray-500/30 rounded-lg"></textarea>
+        class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg"></textarea>
       <!-- Button -->
       <button
         type="submit"
