@@ -2,8 +2,7 @@
   <div class="bg-[#E7EDE7] w-full h-full">
     <div
       class="flex flex-col gap-4 justify-start w-1/2 mx-auto py-4 items-center">
-      <Card :user="user" />
-      <ReplyCard />
+      <Card v-for="user in user" :key="user.id" :user="user" width="w-full" />
       <CommentBox />
     </div>
   </div>
@@ -11,7 +10,7 @@
 
 <script setup>
 import Card from './components/Card.vue';
-import ReplyCard from './components/ReplyCard.vue';
+
 import CommentBox from './components/CommentBox.vue';
 import { ref } from 'vue';
 const user = ref([
