@@ -1,10 +1,8 @@
 <template>
   <!-- Card -->
   <div
-    :class="[
-      'bg-white p-4 h-40 relative rounded-lg shadow-md transition-all duration-300',
-      isReplying ? 'w-[90%] ml-auto' : width,
-    ]">
+    class="bg-white p-4 h-40 relative rounded-lg shadow-md transition-all duration-300"
+    :class="isReply ? 'ml-auto w-[90%]' : 'w-full'">
     <!-- Vote -->
     <div class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 rounded">
       <button @click="count++" class="font-bold opacity-30">+</button>
@@ -20,31 +18,50 @@
         alt="img"
         class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105" />
 
-      <div>
-        <p class="font-medium">{{ user.name }}</p>
-        <p class="text-sm opacity-40">{{ user.time }}</p>
+      <div class="flex gap-2 sm:items-start">
+        <p class="font-medium">{{ user.user_name }}</p>
+        <p class="text-muted-foreground font-medium opacity-30 mt-auto">
+          {{ user.time }}
+        </p>
       </div>
 
       <!-- Reply -->
       <span
+        v-if="!isReply"
         @click="toggleReply(user)"
         class="flex items-center gap-1 font-bold text-blue-500 absolute top-2 right-4 cursor-pointer">
         <Reply class="w-5 h-5" /> Reply
       </span>
+
+      <!-- Edit & Delete -->
+      <!-- ONLY FOR REPLIES -->
+      <div
+        v-if="isReply && replyIndex > 0"
+        class="flex gap-2 absolute top-2 right-4">
+        <span
+          @click="handleDelete"
+          class="flex items-center font-medium gap-1 text-red-500 cursor-pointer">
+          <Trash2 class="w-4 h-4" /> Delete
+        </span>
+        <span
+          @click="handleEdit"
+          class="flex items-center font-medium gap-1 text-blue-500 cursor-pointer">
+          <Edit2 class="w-4 h-4" /> Edit
+        </span>
+      </div>
     </div>
 
     <!-- Comment -->
     <div class="absolute top-20 mx-10 overflow-y-auto max-h-20">
-      <span v-if="replyTo" class="text-blue-700 font-bold">
-        @{{ replyTo }}
-      </span>
       <p class="text-gray-500">
-        {{ user.comment }}
+        <span v-html="highlightMention(user.content)"></span>
       </p>
     </div>
   </div>
   <!-- Reply Box -->
-  <div v-if="isReplying" class="bg-white w-full rounded-lg p-4 mt-4 mx-10">
+  <div
+    v-if="isReplying"
+    class="bg-white w-full rounded-lg p-4 mt-4 mx-10 ml-auto">
     <div class="flex items-center gap-3">
       <img
         src="https://i.pravatar.cc/100"
@@ -56,7 +73,8 @@
         v-model="replyText"
         type="text"
         placeholder="Add a comment"
-        class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg"></textarea>
+        class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg">
+      </textarea>
 
       <!-- Button -->
       <button
@@ -82,9 +100,9 @@
 </template>
 
 <script setup>
-import { Reply } from 'lucide-vue-next';
+import { Reply, Edit2, Trash2 } from 'lucide-vue-next';
 import { ref, nextTick } from 'vue';
-
+const emit = defineEmits(['edit', 'delete', 'reply']);
 const count = ref(0);
 const isReplying = ref(false);
 const replyTo = ref(null);
@@ -93,15 +111,25 @@ const inputRef = ref(null);
 
 const props = defineProps({
   user: Object,
-  width: {
-    type: String,
+  isReply: Boolean,
+  replies: {
+    type: Array,
+    default: () => [],
   },
+  replyIndex: Number,
 });
+const highlightMention = (text) => {
+  if (!text) return '';
 
+  return text.replace(
+    /@(\w+)/g,
+    '<span class="text-blue-700 font-bold">@$1</span>',
+  );
+};
 const toggleReply = async (user) => {
   isReplying.value = true;
-  replyTo.value = isReplying.value ? props.user.name : '@name';
-  replyText.value = `@${user.name} `;
+  replyTo.value = user.user_name;
+  replyText.value = `@${user.user_name} `;
 
   await nextTick();
   inputRef.value?.focus();
@@ -109,12 +137,20 @@ const toggleReply = async (user) => {
 const submitReply = () => {
   if (replyText.value.trim() === '') return;
 
-  // Here you can handle the reply submission, e.g., send it to an API or update local state
-  console.log('Reply submitted:', replyText.value);
+  emit('reply', {
+    content: replyText.value,
+    parent_id: props.user.id,
+  });
 
   // Reset the reply box
   isReplying.value = false;
   replyTo.value = null;
   replyText.value = '';
+};
+const handleEdit = (newContent) => {
+  emit('edit', { id: props.user.id, content: newContent });
+};
+const handleDelete = () => {
+  emit('delete', props.user.id);
 };
 </script>
