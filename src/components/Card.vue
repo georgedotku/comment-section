@@ -33,7 +33,6 @@
         <Reply class="w-5 h-5" /> Reply
       </span>
 
-      <!-- Edit & Delete -->
       <!-- ONLY FOR REPLIES -->
       <div
         v-if="isReply && replyIndex > 0"
@@ -84,18 +83,6 @@
         REPLY
       </button>
     </div>
-    <!-- Actions -->
-    <!-- <div class="flex gap-2 mt-2 justify-end">
-      <button @click="isReplying = false" class="px-3 py-1 text-gray-500">
-        Cancel
-      </button>
-
-      <button
-        @click="submitReply"
-        class="px-4 py-1 bg-blue-500 text-white rounded">
-        Reply
-      </button> 
-    </div> -->
   </div>
 </template>
 
