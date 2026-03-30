@@ -47,8 +47,8 @@ onMounted(fetchComments);
 const allComments = computed(() =>
   user.value.filter((u) => u.parent_id === null),
 );
-const allReplies = computed(() =>
-  user.value.filter((u) => u.parent_id !== null),
+const allReplies = computed((parentId) =>
+  user.value.filter((u) => u.parent_id === parentId),
 );
 // const getReplies = (id) => {
 //   return user.value
@@ -65,7 +65,7 @@ const addComment = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: getCurrentUser().name,
+      user_name: 'Jane Doe',
       avatar: 'https://i.pravatar.cc/200',
       content: data.content,
       parent_id: null,
@@ -85,7 +85,7 @@ const addReply = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: getCurrentUser().name,
+      user_name: 'Jane Doe',
       avatar: 'https://i.pravatar.cc/200',
       content: data.content,
       parent_id: data.parent_id,
