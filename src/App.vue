@@ -1,5 +1,5 @@
 <script setup>
-import Card from './components/Card.vue';
+import Card from './components/CommentCard.vue';
 import CommentBox from './components/CommentBox.vue';
 import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -19,9 +19,9 @@ onMounted(fetchComments);
 const allComments = computed(() =>
   comments.value.filter((u) => u.parent_id === null),
 );
-const allReplies = computed((parentId) =>
-  comments.value.filter((u) => u.parent_id === parentId),
-);
+const getReplies = (parentId) => {
+  return comments.value.filter((c) => c.parent_id === parentId);
+};
 
 // ADD COMMENT
 const addComment = async (data) => {
@@ -98,26 +98,29 @@ const formatTime = (date) => {
 <template>
   <div class="bg-[#E7EDE7] w-full min-h-screen">
     <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
-      <!-- COMMENTS -->
-      <Card
-        v-for="(comment, index) in allComments"
-        :key="comment.id"
-        :comment="comment"
-        :isReply="false"
-        :replyIndex="index"
-        @delete="deleteComment"
-        @edit="editComment"
-        @reply="addReply" />
-      <!-- REPLIES (BOTTOM) -->
-      <!-- <Card
-        v-for="(reply, index) in allReplies"
-        :key="reply.id"
-        :comment="reply"
-        :isReply="true"
-        :replyIndex="index"
-        @delete="deleteComment"
-        @edit="editComment"
-        @reply="addReply" /> -->
+      <div v-for="comment in comments" :key="comment.id">
+        <!-- MAIN COMMENT -->
+        <Card
+          v-for="comment in comments"
+          :key="comment.id"
+          :comment="comment"
+          :isReply="false"
+          @delete="deleteComment"
+          @edit="editComment"
+          @reply="addReply" />
+
+        <!-- REPLIES -->
+        <div class="ml-auto mt-2"></div>
+        <Card
+          v-for="(reply, index) in getReplies(comment.id)"
+          :key="reply.id"
+          :comment="reply"
+          :isReply="true"
+          :replyIndex="index"
+          @delete="deleteComment"
+          @edit="editComment"
+          @reply="addReply" />
+      </div>
       <!-- INPUT -->
       <CommentBox @add-comment="addComment" />
     </div>

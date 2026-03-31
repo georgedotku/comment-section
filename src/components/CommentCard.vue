@@ -27,7 +27,6 @@
 
       <!-- Reply -->
       <span
-        v-if="!isReply"
         @click="toggleReply(comment)"
         class="flex items-center gap-1 font-bold text-blue-500 absolute top-2 right-4 cursor-pointer">
         <Reply class="w-5 h-5" /> Reply
@@ -113,6 +112,13 @@ const highlightMention = (text) => {
   );
 };
 const toggleReply = async (user) => {
+  // close the reply box
+  if (isReplying.value) {
+    isReplying.value = false;
+    replyTo.value = null;
+    replyText.value = '';
+    return;
+  }
   isReplying.value = true;
   replyTo.value = user.user_name;
   replyText.value = `@${user.user_name} `;
@@ -125,7 +131,7 @@ const submitReply = () => {
 
   emit('reply', {
     content: replyText.value,
-    parent_id: props.user.id,
+    parent_id: props.comment.id,
   });
 
   // Reset the reply box
@@ -134,9 +140,9 @@ const submitReply = () => {
   replyText.value = '';
 };
 const handleEdit = (newContent) => {
-  emit('edit', { id: props.user.id, content: newContent });
+  emit('edit', { id: props.comment.id, content: newContent });
 };
 const handleDelete = () => {
-  emit('delete', props.user.id);
+  emit('delete', props.comment.id);
 };
 </script>
