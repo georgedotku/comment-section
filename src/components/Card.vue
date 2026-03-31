@@ -14,21 +14,21 @@
     <div
       class="group flex mx-10 absolute top-4 left-4 w-[90%] items-center gap-3">
       <img
-        :src="user.avatar"
+        :src="comment.avatar"
         alt="img"
         class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105" />
 
       <div class="flex gap-2 sm:items-start">
-        <p class="font-medium">{{ user.user_name }}</p>
+        <p class="font-medium">{{ comment.user_name }}</p>
         <p class="text-muted-foreground font-medium opacity-30 mt-auto">
-          {{ user.time }}
+          {{ comment.time }}
         </p>
       </div>
 
       <!-- Reply -->
       <span
         v-if="!isReply"
-        @click="toggleReply(user)"
+        @click="toggleReply(comment)"
         class="flex items-center gap-1 font-bold text-blue-500 absolute top-2 right-4 cursor-pointer">
         <Reply class="w-5 h-5" /> Reply
       </span>
@@ -53,7 +53,7 @@
     <!-- Comment -->
     <div class="absolute top-20 mx-10 overflow-y-auto max-h-20">
       <p class="text-gray-500">
-        <span v-html="highlightMention(user.content)"></span>
+        <span v-html="highlightMention(comment.content)"></span>
       </p>
     </div>
   </div>
@@ -97,13 +97,12 @@ const replyText = ref('');
 const inputRef = ref(null);
 
 const props = defineProps({
-  user: Object,
+  comment: Object,
   isReply: Boolean,
+  replyIndex: Number,
   replies: {
     type: Array,
-    default: () => [],
   },
-  replyIndex: Number,
 });
 const highlightMention = (text) => {
   if (!text) return '';

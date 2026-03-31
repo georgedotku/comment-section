@@ -17,10 +17,10 @@ const fetchComments = async () => {
 onMounted(fetchComments);
 
 const allComments = computed(() =>
-  user.value.filter((u) => u.parent_id === null),
+  comments.value.filter((u) => u.parent_id === null),
 );
 const allReplies = computed((parentId) =>
-  user.value.filter((u) => u.parent_id === parentId),
+  comments.value.filter((u) => u.parent_id === parentId),
 );
 
 // ADD COMMENT
@@ -37,7 +37,7 @@ const addComment = async (data) => {
   });
 
   const newComment = await res.json();
-  user.value.push({
+  comments.value.push({
     ...newComment,
     time: formatTime(newComment.created_at),
   });
@@ -57,7 +57,7 @@ const addReply = async (data) => {
   });
 
   const newReply = await res.json();
-  user.value.push({
+  comments.value.push({
     ...newReply,
     time: formatTime(newReply.created_at),
   });
@@ -80,7 +80,7 @@ const deleteComment = async (id) => {
     method: 'DELETE',
   });
 
-  user.value = user.value.filter((u) => u.id !== id);
+  comments.value = comments.value.filter((u) => u.id !== id);
 };
 
 // HELPERS
@@ -100,10 +100,11 @@ const formatTime = (date) => {
     <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
       <!-- COMMENTS -->
       <Card
-        v-for="comment in allComments"
+        v-for="(comment, index) in allComments"
         :key="comment.id"
-        :user="comment"
+        :comment="comment"
         :isReply="false"
+        :replyIndex="index"
         @delete="deleteComment"
         @edit="editComment"
         @reply="addReply" />
@@ -111,7 +112,7 @@ const formatTime = (date) => {
       <!-- <Card
         v-for="(reply, index) in allReplies"
         :key="reply.id"
-        :user="reply"
+        :comment="reply"
         :isReply="true"
         :replyIndex="index"
         @delete="deleteComment"
