@@ -2,7 +2,7 @@
   <!-- Card -->
   <div
     class="bg-white p-4 h-40 relative rounded-lg shadow-md transition-all duration-300"
-    :class="isReply ? 'ml-auto w-[90%]' : 'w-full'">
+    :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
     <!-- Vote -->
     <div class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 rounded">
       <button @click="count++" class="font-bold opacity-30">+</button>
@@ -59,7 +59,8 @@
   <!-- Reply Box -->
   <div
     v-if="isReplying"
-    class="bg-white w-full rounded-lg p-4 mt-4 mx-10 ml-auto">
+    class="bg-white rounded-lg p-4 mt-4 ml-auto"
+    :class="[isReply ? 'w-[90%] ml-auto' : 'w-full']">
     <div class="flex items-center gap-3">
       <img
         src="https://i.pravatar.cc/100"
@@ -99,9 +100,7 @@ const props = defineProps({
   comment: Object,
   isReply: Boolean,
   replyIndex: Number,
-  replies: {
-    type: Array,
-  },
+  replies: Array,
 });
 const highlightMention = (text) => {
   if (!text) return '';

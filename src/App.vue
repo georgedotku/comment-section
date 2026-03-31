@@ -1,27 +1,33 @@
 <script setup>
-import Card from './components/CommentCard.vue';
+import CommentCard from './components/CommentCard.vue';
 import CommentBox from './components/CommentBox.vue';
 import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 const comments = ref([]);
-
+const buildTree = (data, parentId = null) => {
+  return data
+    .filter((item) => item.parent_id === parentId)
+    .map((item) => ({
+      ...item,
+      time: formatTime(item.created_at),
+      replies: buildTree(data, item.id), // recursion
+    }));
+};
 const fetchComments = async () => {
   const res = await fetch('http://localhost:4000/comments');
   const data = await res.json();
-  comments.value = data.map((c) => ({
-    ...c,
-    time: formatTime(c.created_at),
-  }));
+  comments.value = buildTree(data);
 };
+
 onMounted(fetchComments);
 
-const allComments = computed(() =>
-  comments.value.filter((u) => u.parent_id === null),
-);
-const getReplies = (parentId) => {
-  return comments.value.filter((c) => c.parent_id === parentId);
-};
+// const allComments = computed(() =>
+//   comments.value.filter((u) => u.parent_id === null),
+// );
+// const getReplies = (parentId) => {
+//   return comments.value.filter((c) => c.parent_id === parentId);
+// };
 
 // ADD COMMENT
 const addComment = async (data) => {
@@ -29,7 +35,7 @@ const addComment = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: 'Jane Doe',
+      user_name: 'Jane',
       avatar: 'https://i.pravatar.cc/200',
       content: data.content,
       parent_id: null,
@@ -49,18 +55,14 @@ const addReply = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: 'Jane Doe',
+      user_name: 'Jane',
       avatar: 'https://i.pravatar.cc/200',
       content: data.content,
       parent_id: data.parent_id,
     }),
   });
 
-  const newReply = await res.json();
-  comments.value.push({
-    ...newReply,
-    time: formatTime(newReply.created_at),
-  });
+  fetchComments();
 };
 
 // EDIT
@@ -100,9 +102,7 @@ const formatTime = (date) => {
     <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
       <div v-for="comment in comments" :key="comment.id">
         <!-- MAIN COMMENT -->
-        <Card
-          v-for="comment in comments"
-          :key="comment.id"
+        <CommentCard
           :comment="comment"
           :isReply="false"
           @delete="deleteComment"
@@ -110,9 +110,8 @@ const formatTime = (date) => {
           @reply="addReply" />
 
         <!-- REPLIES -->
-        <div class="ml-auto mt-2"></div>
-        <Card
-          v-for="(reply, index) in getReplies(comment.id)"
+        <CommentCard
+          v-for="(reply, index) in comment.replies"
           :key="reply.id"
           :comment="reply"
           :isReply="true"
@@ -121,6 +120,7 @@ const formatTime = (date) => {
           @edit="editComment"
           @reply="addReply" />
       </div>
+
       <!-- INPUT -->
       <CommentBox @add-comment="addComment" />
     </div>
