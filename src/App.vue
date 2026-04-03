@@ -108,7 +108,16 @@ const deleteComment = async (id) => {
     method: 'DELETE',
   });
 
-  comments.value = comments.value.filter((u) => u.id !== id);
+  const removeComment = (list) => {
+    return list
+      .filter((item) => item.id !== id)
+      .map((item) => ({
+        ...item,
+        replies: item.replies ? removeComment(item.replies) : [],
+      }));
+  };
+
+  comments.value = removeComment(comments.value);
 };
 
 // HELPERS
