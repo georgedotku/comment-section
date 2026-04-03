@@ -52,9 +52,9 @@
     </div>
 
     <!-- Comment -->
-    <div class="absolute top-20 mx-10 overflow-y-auto border w-[90%] max-h-20">
+    <div class="absolute top-20 mx-10 overflow-y-auto w-[90%] max-h-20">
       <!-- EDIT MODE -->
-      <div v-if="isEditing" class="flex items-center border gap-3">
+      <div v-if="isEditing" class="flex items-center gap-3">
         <textarea
           ref="editRef"
           v-model="editText"
