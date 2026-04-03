@@ -1,7 +1,7 @@
 <template>
   <!-- Card -->
   <div
-    class="bg-white p-4 h-40 relative rounded-lg shadow-md transition-all duration-300"
+    class="bg-white p-4 h-40 relative rounded-lg border shadow-md transition-all duration-300"
     :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
     <!-- Vote -->
     <div class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 rounded">
@@ -12,12 +12,11 @@
 
     <!-- User Info -->
     <div
-      class="group flex mx-10 absolute top-4 left-4 w-[90%] items-center gap-3">
+      class="group flex mx-10 border absolute top-4 left-4 w-[90%] items-center gap-3">
       <img
         :src="comment.avatar"
         alt="img"
         class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105" />
-
       <div class="flex gap-2 sm:items-start">
         <p class="font-medium">{{ comment.user_name }}</p>
         <p class="text-muted-foreground font-medium opacity-30 mt-auto">
@@ -25,14 +24,14 @@
         </p>
       </div>
 
-      <!-- Reply -->
+      <!-- Reply button -->
       <span
         @click="toggleReply(comment)"
         class="flex items-center gap-1 font-bold text-blue-500 absolute top-2 right-4 cursor-pointer">
         <Reply class="w-5 h-5" /> Reply
       </span>
 
-      <!-- ONLY FOR REPLIES -->
+      <!-- Edit & Delete buttons -->
       <div
         v-if="isReply && replyIndex > 0"
         class="flex gap-2 absolute top-2 right-4">
@@ -50,7 +49,7 @@
     </div>
 
     <!-- Comment -->
-    <div class="absolute top-20 mx-10 overflow-y-auto max-h-20">
+    <div class="absolute border top-20 mx-10 overflow-y-auto max-h-20">
       <p class="text-gray-500">
         <span v-html="highlightMention(comment.content)"></span>
       </p>
@@ -84,11 +83,27 @@
       </button>
     </div>
   </div>
+  <!-- NESTED REPLIES -->
+  <div v-if="comment.replies?.length" class="mt-2 border-black border">
+    <CommentCard
+      v-for="(reply, index) in comment.replies"
+      :key="reply.id"
+      :comment="reply"
+      :isReply="true"
+      :replyIndex="index"
+      @delete="$emit('delete', $event)"
+      @edit="$emit('edit', $event)"
+      @reply="$emit('reply', $event)" />
+  </div>
+  <p class="text-xs text-red-500">index: {{ replyIndex }}</p>
 </template>
 
 <script setup>
 import { Reply, Edit2, Trash2 } from 'lucide-vue-next';
 import { ref, nextTick } from 'vue';
+defineOptions({
+  name: 'CommentCard',
+});
 const emit = defineEmits(['edit', 'delete', 'reply']);
 const count = ref(0);
 const isReplying = ref(false);

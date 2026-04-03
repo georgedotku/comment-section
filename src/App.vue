@@ -14,10 +14,12 @@ const buildTree = (data, parentId = null) => {
       replies: buildTree(data, item.id), // recursion
     }));
 };
+
 const fetchComments = async () => {
   const res = await fetch('http://localhost:4000/comments');
   const data = await res.json();
   comments.value = buildTree(data);
+  console.log(comments.value);
 };
 
 onMounted(fetchComments);
@@ -110,7 +112,7 @@ const formatTime = (date) => {
           @reply="addReply" />
 
         <!-- REPLIES -->
-        <CommentCard
+        <!-- <CommentCard
           v-for="(reply, index) in comment.replies"
           :key="reply.id"
           :comment="reply"
@@ -118,7 +120,7 @@ const formatTime = (date) => {
           :replyIndex="index"
           @delete="deleteComment"
           @edit="editComment"
-          @reply="addReply" />
+          @reply="addReply" /> -->
       </div>
 
       <!-- INPUT -->
