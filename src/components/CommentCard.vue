@@ -19,6 +19,11 @@
         class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105" />
       <div class="flex gap-2 sm:items-start">
         <p class="font-medium">{{ comment.user_name }}</p>
+        <span
+          v-if="isReply && isOwner"
+          class="bg-blue-500 text-white text-[12px] px-2 py-0.5 rounded font-medium">
+          you
+        </span>
         <p class="text-muted-foreground font-medium opacity-30 mt-auto">
           {{ comment.time }}
         </p>
@@ -47,10 +52,35 @@
     </div>
 
     <!-- Comment -->
-    <div class="absolute top-20 mx-10 overflow-y-auto max-h-20">
-      <p class="text-gray-500">
+    <div class="absolute top-20 mx-10 overflow-y-auto border w-[90%] max-h-20">
+      <!-- EDIT MODE -->
+      <div v-if="isEditing" class="flex items-center border gap-3">
+        <textarea
+          ref="editRef"
+          v-model="editText"
+          class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg"></textarea>
+
+        <div class="flex gap-2 flex-col justify-end">
+          <button @click="cancelEdit" class="px-3 py-1 rounded bg-gray-300">
+            CANCEL
+          </button>
+
+          <button
+            @click="saveEdit"
+            class="px-3 py-1 rounded bg-blue-500 text-white">
+            UPDATE
+          </button>
+        </div>
+      </div>
+
+      <!-- NORMAL MODE -->
+      <p v-else class="text-gray-500">
         <span v-html="highlightMention(comment.content)"></span>
       </p>
+
+      <!-- <p class="text-gray-500">
+        <span v-html="highlightMention(comment.content)"></span>
+      </p> -->
     </div>
   </div>
   <!-- Reply Box -->
@@ -71,7 +101,6 @@
         placeholder="Add a comment"
         class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg">
       </textarea>
-
       <!-- Button -->
       <button
         @click="submitReply"
@@ -107,6 +136,9 @@ const isReplying = ref(false);
 const replyTo = ref(null);
 const replyText = ref('');
 const inputRef = ref(null);
+const isEditing = ref(false);
+const editText = ref('');
+const editRef = ref(null);
 
 const props = defineProps({
   comment: Object,
@@ -136,7 +168,6 @@ const toggleReply = async (user) => {
   isReplying.value = true;
   replyTo.value = user.user_name;
   replyText.value = `@${user.user_name} `;
-
   await nextTick();
   inputRef.value?.focus();
 };
@@ -156,7 +187,25 @@ const submitReply = () => {
   replyText.value = '';
 };
 const handleEdit = (newContent) => {
-  emit('edit', { id: props.comment.id, content: newContent });
+  isEditing.value = true;
+  editText.value = props.comment.content;
+  nextTick(() => {
+    editRef.value?.focus();
+  });
+};
+const cancelEdit = () => {
+  isEditing.value = false;
+  editText.value = '';
+};
+const saveEdit = () => {
+  if (!editText.value.trim()) return;
+
+  emit('edit', {
+    id: props.comment.id,
+    content: editText.value,
+  });
+
+  isEditing.value = false;
 };
 const handleDelete = () => {
   emit('delete', props.comment.id);
