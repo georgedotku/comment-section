@@ -18,7 +18,8 @@ db.prepare(
     avatar TEXT,
     content TEXT,
     parent_id INTEGER DEFAULT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
   )
 `,
 ).run();

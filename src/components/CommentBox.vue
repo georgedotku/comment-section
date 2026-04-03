@@ -4,7 +4,7 @@
     <div class="flex items-center gap-3">
       <!-- Avatar -->
       <img
-        src="https://i.pravatar.cc/100"
+        :src="currentUser.avatar"
         alt="img"
         class="h-12 w-12 mb-auto rounded-full transition-transform duration-200 hover:scale-105 active:scale-95" />
       <!-- Input -->
@@ -27,12 +27,17 @@
 
 <script setup>
 import { ref } from 'vue';
+const props = defineProps({
+  currentUser: Object,
+});
 const emit = defineEmits(['add-comment']);
 const input = ref('');
 const handleSubmit = () => {
   if (!input.value.trim()) return; // prevent empty comments
   emit('add-comment', {
     content: input.value,
+    user_name: props.currentUser.username,
+    avatar: props.currentUser.avatar,
   });
   input.value = ''; // clear input after submission
 };

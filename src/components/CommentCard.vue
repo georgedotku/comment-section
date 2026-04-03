@@ -1,7 +1,7 @@
 <template>
   <!-- Card -->
   <div
-    class="bg-white p-4 h-40 relative rounded-lg border shadow-md transition-all duration-300"
+    class="bg-white p-4 h-40 relative rounded-lg shadow-md transition-all duration-300"
     :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
     <!-- Vote -->
     <div class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 rounded">
@@ -12,7 +12,7 @@
 
     <!-- User Info -->
     <div
-      class="group flex mx-10 border absolute top-4 left-4 w-[90%] items-center gap-3">
+      class="group flex mx-10 absolute top-4 left-4 w-[90%] items-center gap-3">
       <img
         :src="comment.avatar"
         alt="img"
@@ -24,17 +24,8 @@
         </p>
       </div>
 
-      <!-- Reply button -->
-      <span
-        @click="toggleReply(comment)"
-        class="flex items-center gap-1 font-bold text-blue-500 absolute top-2 right-4 cursor-pointer">
-        <Reply class="w-5 h-5" /> Reply
-      </span>
-
       <!-- Edit & Delete buttons -->
-      <div
-        v-if="isReply && replyIndex > 0"
-        class="flex gap-2 absolute top-2 right-4">
+      <div v-if="isReply && isOwner" class="flex gap-2 absolute top-2 right-4">
         <span
           @click="handleDelete"
           class="flex items-center font-medium gap-1 text-red-500 cursor-pointer">
@@ -46,10 +37,17 @@
           <Edit2 class="w-4 h-4" /> Edit
         </span>
       </div>
+      <!-- Reply button -->
+      <span
+        v-else
+        @click="toggleReply(comment)"
+        class="flex items-center gap-1 font-bold text-blue-500 absolute top-2 right-4 cursor-pointer">
+        <Reply class="w-5 h-5" /> Reply
+      </span>
     </div>
 
     <!-- Comment -->
-    <div class="absolute border top-20 mx-10 overflow-y-auto max-h-20">
+    <div class="absolute top-20 mx-10 overflow-y-auto max-h-20">
       <p class="text-gray-500">
         <span v-html="highlightMention(comment.content)"></span>
       </p>
@@ -62,7 +60,7 @@
     :class="[isReply ? 'w-[90%] ml-auto' : 'w-full']">
     <div class="flex items-center gap-3">
       <img
-        src="https://i.pravatar.cc/100"
+        :src="currentUser.avatar"
         alt="img"
         class="h-12 w-12 mb-auto rounded-full transition-transform duration-200 hover:scale-105 active:scale-95" />
       <!-- Input -->
@@ -84,23 +82,22 @@
     </div>
   </div>
   <!-- NESTED REPLIES -->
-  <div v-if="comment.replies?.length" class="mt-2 border-black border">
+  <div v-if="comment.replies?.length" class="mt-2">
     <CommentCard
-      v-for="(reply, index) in comment.replies"
+      v-for="reply in comment.replies"
       :key="reply.id"
       :comment="reply"
       :isReply="true"
-      :replyIndex="index"
+      :currentUser="currentUser"
       @delete="$emit('delete', $event)"
       @edit="$emit('edit', $event)"
       @reply="$emit('reply', $event)" />
   </div>
-  <p class="text-xs text-red-500">index: {{ replyIndex }}</p>
 </template>
 
 <script setup>
 import { Reply, Edit2, Trash2 } from 'lucide-vue-next';
-import { ref, nextTick } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 defineOptions({
   name: 'CommentCard',
 });
@@ -113,10 +110,13 @@ const inputRef = ref(null);
 
 const props = defineProps({
   comment: Object,
+  currentUser: Object,
   isReply: Boolean,
-  replyIndex: Number,
   replies: Array,
 });
+const isOwner = computed(
+  () => props.comment.user_name === props.currentUser.username,
+);
 const highlightMention = (text) => {
   if (!text) return '';
 
@@ -146,6 +146,8 @@ const submitReply = () => {
   emit('reply', {
     content: replyText.value,
     parent_id: props.comment.id,
+    user_name: props.currentUser.username,
+    avatar: props.currentUser.avatar,
   });
 
   // Reset the reply box

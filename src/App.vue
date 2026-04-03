@@ -5,6 +5,30 @@ import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 const comments = ref([]);
+
+const users = [
+  {
+    id: 1,
+    username: 'amyrobson',
+    avatar: 'https://i.pravatar.cc/100?img=1',
+  },
+  {
+    id: 2,
+    username: 'maxblagun',
+    avatar: 'https://i.pravatar.cc/100?img=2',
+  },
+  {
+    id: 3,
+    username: 'ramsesmiron',
+    avatar: 'https://i.pravatar.cc/100?img=3',
+  },
+  {
+    id: 4,
+    username: 'juliusomo',
+    avatar: 'https://i.pravatar.cc/100?img=4',
+  },
+];
+const currentUser = ref(users[0]); // Simulate logged-in user
 const buildTree = (data, parentId = null) => {
   return data
     .filter((item) => item.parent_id === parentId)
@@ -37,8 +61,8 @@ const addComment = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: 'Jane',
-      avatar: 'https://i.pravatar.cc/200',
+      user_name: data.user_name,
+      avatar: data.avatar,
       content: data.content,
       parent_id: null,
     }),
@@ -57,8 +81,8 @@ const addReply = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: 'Jane',
-      avatar: 'https://i.pravatar.cc/200',
+      user_name: data.user_name,
+      avatar: data.avatar,
       content: data.content,
       parent_id: data.parent_id,
     }),
@@ -107,6 +131,7 @@ const formatTime = (date) => {
         <CommentCard
           :comment="comment"
           :isReply="false"
+          :currentUser="currentUser"
           @delete="deleteComment"
           @edit="editComment"
           @reply="addReply" />
@@ -122,9 +147,19 @@ const formatTime = (date) => {
           @edit="editComment"
           @reply="addReply" /> -->
       </div>
-
+      <div class="flex gap-3 mb-4">
+        <div
+          v-for="user in users"
+          :key="user.id"
+          @click="currentUser = user"
+          class="cursor-pointer flex items-center gap-2 p-2 border rounded-lg"
+          :class="currentUser.id === user.id ? 'border-blue-500' : ''">
+          <img :src="user.avatar" class="h-8 w-8 rounded-full" />
+          <span>{{ user.username }}</span>
+        </div>
+      </div>
       <!-- INPUT -->
-      <CommentBox @add-comment="addComment" />
+      <CommentBox :currentUser="currentUser" @add-comment="addComment" />
     </div>
   </div>
 </template>
