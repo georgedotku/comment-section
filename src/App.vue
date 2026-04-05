@@ -5,7 +5,7 @@ import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 const comments = ref([]);
-
+const apiUrl = 'https://comments-apiv2.onrender.com/comments';
 const users = [
   {
     id: 1,
@@ -40,7 +40,7 @@ const buildTree = (data, parentId = null) => {
 };
 
 const fetchComments = async () => {
-  const res = await fetch('http://localhost:4000/comments');
+  const res = await fetch(`${apiUrl}`);
   const data = await res.json();
   comments.value = buildTree(data);
   console.log(comments.value);
@@ -57,7 +57,7 @@ onMounted(fetchComments);
 
 // ADD COMMENT
 const addComment = async (data) => {
-  const res = await fetch('http://localhost:4000/comments', {
+  const res = await fetch(`${apiUrl}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -77,7 +77,7 @@ const addComment = async (data) => {
 
 // ADD REPLY
 const addReply = async (data) => {
-  const res = await fetch('http://localhost:4000/comments', {
+  const res = await fetch(`${apiUrl}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -93,7 +93,7 @@ const addReply = async (data) => {
 
 // EDIT
 const editComment = async ({ id, content }) => {
-  await fetch(`http://localhost:4000/comments/${id}`, {
+  await fetch(`${apiUrl}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content }),
@@ -104,7 +104,7 @@ const editComment = async ({ id, content }) => {
 
 // DELETE
 const deleteComment = async (id) => {
-  await fetch(`http://localhost:4000/comments/${id}`, {
+  await fetch(`${apiUrl}/${id}`, {
     method: 'DELETE',
   });
 
