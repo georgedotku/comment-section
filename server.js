@@ -9,7 +9,10 @@ const db = new Database('users.db');
 // middlewares
 app.use(
   cors({
-    origin: 'https://comment-section-pi.vercel.app',
+    origin: [
+      'http://localhost:5174', // Vue dev server
+      'https://your-app.vercel.app',
+    ],
   }),
 );
 app.use(express.json());
