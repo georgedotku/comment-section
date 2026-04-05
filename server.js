@@ -7,7 +7,11 @@ const app = express();
 const db = new Database('users.db');
 
 // middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: 'https://comment-section-pi.vercel.app',
+  }),
+);
 app.use(express.json());
 // create table if not exists
 db.prepare(
