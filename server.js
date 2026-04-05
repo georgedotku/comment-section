@@ -5,17 +5,6 @@ import commentsRouter from './routes/comments.js';
 
 const app = express();
 const db = new Database('users.db');
-
-// middlewares
-app.use(
-  cors({
-    origin: [
-      'http://localhost:5174', // Vue dev server
-      'https://comment-section-pi.vercel.app',
-    ],
-  }),
-);
-app.use(express.json());
 // create table if not exists
 db.prepare(
   `
@@ -30,7 +19,16 @@ db.prepare(
   )
 `,
 ).run();
-
+// middlewares
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5174', // Vue dev server
+      'https://comment-section-pi.vercel.app',
+    ],
+  }),
+);
+app.use(express.json());
 app.use('/comments', commentsRouter(db));
 // start server
 app.listen(4000, () => {
