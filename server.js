@@ -11,7 +11,7 @@ app.use(
   cors({
     origin: [
       'http://localhost:5174', // Vue dev server
-      'https://your-app.vercel.app',
+      'https://comment-section-pi.vercel.app',
     ],
   }),
 );
