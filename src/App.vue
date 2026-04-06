@@ -6,8 +6,9 @@ import { formatDistanceToNowStrict } from 'date-fns';
 
 const comments = ref([]);
 const apiUrl =
-  'https://comments-apiv2.onrender.com/comments' ||
-  'http://localhost:4000/comments';
+  import.meta.env.MODE === 'development'
+    ? 'http://localhost:4000/comments'
+    : 'https://comments-apiv2.onrender.com/comments';
 const users = [
   {
     id: 1,
