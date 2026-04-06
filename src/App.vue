@@ -5,7 +5,9 @@ import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 const comments = ref([]);
-const apiUrl = 'https://comments-apiv2.onrender.com/comments';
+const apiUrl =
+  'https://comments-apiv2.onrender.com/comments' ||
+  'http://localhost:4000/comments';
 const users = [
   {
     id: 1,
