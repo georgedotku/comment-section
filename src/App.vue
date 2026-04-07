@@ -35,20 +35,20 @@ const users = [
   },
 ];
 const currentUser = ref(users[0]); // Simulate logged-in user
-const buildTree = (data, parentId = null) => {
+const replyTree = (data, parentId = null) => {
   return data
     .filter((item) => item.parent_id === parentId)
     .map((item) => ({
       ...item,
       time: formatTime(item.created_at),
-      replies: buildTree(data, item.id), // recursion
+      replies: replyTree(data, item.id), // recursion
     }));
 };
 
 const fetchComments = async () => {
   const res = await fetch(`${apiUrl}`);
   const data = await res.json();
-  comments.value = buildTree(data);
+  comments.value = replyTree(data);
   console.log(comments.value);
 };
 onMounted(fetchComments);
@@ -92,7 +92,11 @@ const addReply = async (data) => {
       parent_id: data.parent_id,
     }),
   });
-  fetchComments();
+  if (res.ok) {
+    fetchComments();
+  } else {
+    console.error('Failed to add reply');
+  }
 };
 
 // EDIT
@@ -122,9 +126,9 @@ const deleteComment = async (id) => {
 };
 
 // HELPERS
-const toggleModal = (comment) => {
+const toggleModal = (id) => {
+  selectedComment.value = id;
   showModal.value = true;
-  selectedComment.value = comment;
 };
 const formatTime = (date) => {
   const seconds = (new Date() - new Date(date)) / 1000;
@@ -137,17 +141,18 @@ const formatTime = (date) => {
 
 <template>
   <div class="bg-[#E7EDE7] w-full min-h-screen">
-  <Modal
-    v-if="showModal"
-    :comment="selectedComment"
-    @delete="
-      (id) => {
-        deleteComment(id);
-        showModal = false;
-      }
-    "
-    @cancel="showModal = false" />
-    <div class="flex flex-col border gap-4 w-1/2 mx-auto py-4">
+    <div v-if="showModal">
+      <Modal
+        :comment="selectedComment"
+        @delete="
+          (id) => {
+            deleteComment(id);
+            showModal = false;
+          }
+        "
+        @cancel="showModal = false" />
+    </div>
+    <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
       <div v-for="comment in comments" :key="comment.id">
         <!-- MAIN COMMENT -->
         <CommentCard

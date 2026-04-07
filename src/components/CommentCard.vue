@@ -32,7 +32,7 @@
       <!-- Edit & Delete buttons -->
       <div v-if="isReply && isOwner" class="flex gap-2 absolute top-2 right-4">
         <span
-          @click="emit('openModal', comment)"
+          @click="emit('openModal', comment.id)"
           class="flex items-center font-medium gap-1 text-red-500 cursor-pointer">
           <Trash2 class="w-4 h-4" /> Delete
         </span>
@@ -56,7 +56,6 @@
       <!-- EDIT MODE -->
       <div v-if="isEditing" class="flex items-center gap-3">
         <textarea
-          ref="editRef"
           v-model="editText"
           class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg"></textarea>
 
@@ -73,7 +72,6 @@
         </div>
       </div>
 
-      <!-- NORMAL MODE -->
       <p v-else class="text-gray-500">
         <span v-html="highlightMention(comment.content)"></span>
       </p>
@@ -95,7 +93,6 @@
         class="h-12 w-12 mb-auto rounded-full transition-transform duration-200 hover:scale-105 active:scale-95" />
       <!-- Input -->
       <textarea
-        ref="inputRef"
         v-model="replyText"
         type="text"
         placeholder="Add a comment"
@@ -127,7 +124,7 @@
 
 <script setup>
 import { Reply, Edit2, Trash2 } from 'lucide-vue-next';
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed } from 'vue';
 const props = defineProps({
   comment: Object,
   currentUser: Object,
@@ -138,22 +135,19 @@ defineOptions({
   name: 'CommentCard',
 });
 const emit = defineEmits(['edit', 'delete', 'reply', 'openModal']);
-emit('openModal', props.comment);
+
 const count = ref(0);
 const isReplying = ref(false);
 const replyTo = ref(null);
 const replyText = ref('');
-const inputRef = ref(null);
 const isEditing = ref(false);
 const editText = ref('');
-const editRef = ref(null);
 
 const isOwner = computed(
   () => props.comment.user_name === props.currentUser.username,
 );
 const highlightMention = (text) => {
   if (!text) return '';
-
   return text.replace(
     /@(\w+)/g,
     '<span class="text-blue-700 font-bold">@$1</span>',
@@ -171,8 +165,6 @@ const toggleReply = async (user) => {
   isReplying.value = true;
   replyTo.value = user.user_name;
   replyText.value = `@${user.user_name} `;
-  await nextTick();
-  inputRef.value?.focus();
 };
 const submitReply = () => {
   if (replyText.value.trim() === '') return;
@@ -183,7 +175,6 @@ const submitReply = () => {
     user_name: props.currentUser.username,
     avatar: props.currentUser.avatar,
   });
-
   // Reset the reply box
   isReplying.value = false;
   replyTo.value = null;
@@ -192,9 +183,6 @@ const submitReply = () => {
 const handleEdit = (newContent) => {
   isEditing.value = true;
   editText.value = props.comment.content;
-  nextTick(() => {
-    editRef.value?.focus();
-  });
 };
 const cancelEdit = () => {
   isEditing.value = false;

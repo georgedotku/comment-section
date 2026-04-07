@@ -2,7 +2,7 @@
 const props = defineProps({ comment: Object });
 const emit = defineEmits(['delete', 'cancel']);
 const handleDelete = () => {
-  emit('delete', props.comment.id);
+  emit('delete', props.comment);
 };
 </script>
 <template>
@@ -12,7 +12,7 @@ const handleDelete = () => {
       <p class="mb-6">Are you sure you want to delete this comment?</p>
       <div class="flex items-center justify-center gap-4">
         <button
-          @click="$emit('cancel')"
+          @click="emit('cancel')"
           class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">
           Cancel
         </button>
