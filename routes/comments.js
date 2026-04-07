@@ -2,8 +2,7 @@ import express from 'express';
 export default function commentsRouter(db) {
   const router = express.Router();
 
-  //=> "3 days ago"
-  // ✅ GET all comments
+  //GET all comments
   router.get('/', (req, res) => {
     const comments = db
       .prepare('SELECT * FROM comments ORDER BY created_at ASC')
@@ -11,7 +10,7 @@ export default function commentsRouter(db) {
     res.json(comments);
   });
 
-  // ✅ CREATE comment / reply
+  // CREATE comment / reply
   router.post('/', (req, res) => {
     const { user_name, avatar, content, parent_id } = req.body;
     if (!user_name || !content) {
@@ -40,7 +39,7 @@ export default function commentsRouter(db) {
     res.json(newComment);
   });
 
-  // ✅ UPDATE comment (edit text)
+  // UPDATE comment (edit text)
   router.put('/:id', (req, res) => {
     const { id } = req.params;
     const { content } = req.body;
@@ -58,7 +57,6 @@ export default function commentsRouter(db) {
     res.json(updated);
   });
 
-  // ✅ DELETE comment (and optionally its replies)
   router.delete('/:id', (req, res) => {
     const { id } = req.params;
     // delete replies too (important)
