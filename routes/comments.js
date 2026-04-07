@@ -18,7 +18,6 @@ export default function commentsRouter(db) {
         error: 'User name and content are required',
       });
     }
-
     const result = db
       .prepare(
         `
