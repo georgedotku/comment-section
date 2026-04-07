@@ -23,7 +23,7 @@ db.prepare(
 app.use(
   cors({
     origin: [
-      'http://localhost:5174', // Vue dev server
+      'http://localhost:5173', // Vue dev server
       'https://comment-section-pi.vercel.app',
     ],
   }),

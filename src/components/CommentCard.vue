@@ -32,7 +32,7 @@
       <!-- Edit & Delete buttons -->
       <div v-if="isReply && isOwner" class="flex gap-2 absolute top-2 right-4">
         <span
-          @click="handleDelete"
+          @click="emit('openModal', comment)"
           class="flex items-center font-medium gap-1 text-red-500 cursor-pointer">
           <Trash2 class="w-4 h-4" /> Delete
         </span>
@@ -118,6 +118,7 @@
       :comment="reply"
       :isReply="true"
       :currentUser="currentUser"
+      @openModal="$emit('openModal', $event)"
       @delete="$emit('delete', $event)"
       @edit="$emit('edit', $event)"
       @reply="$emit('reply', $event)" />
@@ -127,10 +128,17 @@
 <script setup>
 import { Reply, Edit2, Trash2 } from 'lucide-vue-next';
 import { ref, computed, nextTick } from 'vue';
+const props = defineProps({
+  comment: Object,
+  currentUser: Object,
+  isReply: Boolean,
+  replies: Array,
+});
 defineOptions({
   name: 'CommentCard',
 });
-const emit = defineEmits(['edit', 'delete', 'reply']);
+const emit = defineEmits(['edit', 'delete', 'reply', 'openModal']);
+emit('openModal', props.comment);
 const count = ref(0);
 const isReplying = ref(false);
 const replyTo = ref(null);
@@ -140,12 +148,6 @@ const isEditing = ref(false);
 const editText = ref('');
 const editRef = ref(null);
 
-const props = defineProps({
-  comment: Object,
-  currentUser: Object,
-  isReply: Boolean,
-  replies: Array,
-});
 const isOwner = computed(
   () => props.comment.user_name === props.currentUser.username,
 );
@@ -157,6 +159,7 @@ const highlightMention = (text) => {
     '<span class="text-blue-700 font-bold">@$1</span>',
   );
 };
+
 const toggleReply = async (user) => {
   // close the reply box
   if (isReplying.value) {

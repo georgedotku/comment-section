@@ -1,10 +1,13 @@
 <script setup>
 import CommentCard from './components/CommentCard.vue';
 import CommentBox from './components/CommentBox.vue';
+import Modal from './components/Modal.vue';
 import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 const comments = ref([]);
+const selectedComment = ref(null);
+const showModal = ref(false);
 const apiUrl =
   import.meta.env.MODE === 'development'
     ? 'http://localhost:4000/comments'
@@ -48,7 +51,6 @@ const fetchComments = async () => {
   comments.value = buildTree(data);
   console.log(comments.value);
 };
-
 onMounted(fetchComments);
 
 // const allComments = computed(() =>
@@ -90,7 +92,6 @@ const addReply = async (data) => {
       parent_id: data.parent_id,
     }),
   });
-
   fetchComments();
 };
 
@@ -101,7 +102,6 @@ const editComment = async ({ id, content }) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content }),
   });
-
   fetchComments();
 };
 
@@ -110,7 +110,6 @@ const deleteComment = async (id) => {
   await fetch(`${apiUrl}/${id}`, {
     method: 'DELETE',
   });
-
   const removeComment = (list) => {
     return list
       .filter((item) => item.id !== id)
@@ -119,16 +118,17 @@ const deleteComment = async (id) => {
         replies: item.replies ? removeComment(item.replies) : [],
       }));
   };
-
   comments.value = removeComment(comments.value);
 };
 
 // HELPERS
-
+const toggleModal = (comment) => {
+  showModal.value = true;
+  selectedComment.value = comment;
+};
 const formatTime = (date) => {
   const seconds = (new Date() - new Date(date)) / 1000;
   if (seconds < 60) return 'Just now';
-
   return formatDistanceToNowStrict(new Date(date), {
     addSuffix: true,
   });
@@ -137,27 +137,27 @@ const formatTime = (date) => {
 
 <template>
   <div class="bg-[#E7EDE7] w-full min-h-screen">
-    <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
+  <Modal
+    v-if="showModal"
+    :comment="selectedComment"
+    @delete="
+      (id) => {
+        deleteComment(id);
+        showModal = false;
+      }
+    "
+    @cancel="showModal = false" />
+    <div class="flex flex-col border gap-4 w-1/2 mx-auto py-4">
       <div v-for="comment in comments" :key="comment.id">
         <!-- MAIN COMMENT -->
         <CommentCard
           :comment="comment"
           :isReply="false"
           :currentUser="currentUser"
+          @openModal="toggleModal"
           @delete="deleteComment"
           @edit="editComment"
           @reply="addReply" />
-
-        <!-- REPLIES -->
-        <!-- <CommentCard
-          v-for="(reply, index) in comment.replies"
-          :key="reply.id"
-          :comment="reply"
-          :isReply="true"
-          :replyIndex="index"
-          @delete="deleteComment"
-          @edit="editComment"
-          @reply="addReply" /> -->
       </div>
       <div class="flex gap-3 mb-4">
         <div
