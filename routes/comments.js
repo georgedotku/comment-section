@@ -25,13 +25,7 @@ export default function commentsRouter(db) {
         VALUES (?, ?, ?, ?, ?)
       `,
       )
-      .run(
-        user_name,
-        avatar || null,
-        content,
-        parent_id || null,
-        new Date().toISOString(),
-      );
+      .run(user_name, avatar || null, content, parent_id || null);
     const newComment = db
       .prepare('SELECT * FROM comments WHERE id = ?')
       .get(result.lastInsertRowid);
