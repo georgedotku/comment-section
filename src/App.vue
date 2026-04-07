@@ -53,13 +53,6 @@ const fetchComments = async () => {
 };
 onMounted(fetchComments);
 
-// const allComments = computed(() =>
-//   comments.value.filter((u) => u.parent_id === null),
-// );
-// const getReplies = (parentId) => {
-//   return comments.value.filter((c) => c.parent_id === parentId);
-// };
-
 // ADD COMMENT
 const addComment = async (data) => {
   const res = await fetch(`${apiUrl}`, {
