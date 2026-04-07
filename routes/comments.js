@@ -58,7 +58,7 @@ export default function commentsRouter(db) {
 
   router.delete('/:id', (req, res) => {
     const { id } = req.params;
-    // delete replies too (important)
+    // delete replies and comment
     db.prepare('DELETE FROM comments WHERE parent_id = ?').run(id);
     db.prepare('DELETE FROM comments WHERE id = ?').run(id);
     res.json({ success: true });
