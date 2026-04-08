@@ -49,7 +49,6 @@ const fetchComments = async () => {
   const res = await fetch(`${apiUrl}`);
   const data = await res.json();
   comments.value = replyTree(data);
-  console.log(comments.value);
 };
 onMounted(fetchComments);
 
