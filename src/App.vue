@@ -10,7 +10,7 @@ const selectedComment = ref(null);
 const showModal = ref(false);
 const apiUrl =
   import.meta.env.MODE === 'development'
-    ? 'http://localhost:4000/comments'
+    ? 'http://localhost:1337/api/comments'
     : 'https://comments-apiv2.onrender.com/comments';
 const users = [
   {
@@ -47,8 +47,14 @@ const replyTree = (data, parentId = null) => {
 
 const fetchComments = async () => {
   const res = await fetch(`${apiUrl}`);
-  const data = await res.json();
-  comments.value = replyTree(data);
+  const dataJson = await res.json();
+  console.log('Fetched comments:', dataJson);
+  const formatted = dataJson.data.map((item) => ({
+    id: item.id,
+    ...item.attributes,
+    parent_id: item.attributes.parent?.data?.id || null,
+  }));
+  comments.value = replyTree(formatted);
 };
 onMounted(fetchComments);
 
@@ -61,7 +67,7 @@ const addComment = async (data) => {
       user_name: data.user_name,
       avatar: data.avatar,
       content: data.content,
-      parent_id: null,
+      parent: null,
     }),
   });
 
@@ -81,7 +87,7 @@ const addReply = async (data) => {
       user_name: data.user_name,
       avatar: data.avatar,
       content: data.content,
-      parent_id: data.parent_id,
+      parent: data.parent_id,
     }),
   });
   if (res.ok) {
