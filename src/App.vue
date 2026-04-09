@@ -54,6 +54,7 @@ const fetchComments = async () => {
   console.log(jsonData);
   const formatted = jsonData.data.map((item) => ({
     id: item.id,
+    documentId: item.documentId,
     username: item.username,
     avatar: item.avatar,
     content: item.content,
@@ -109,8 +110,8 @@ const addReply = async (data) => {
 };
 
 // EDIT
-const editComment = async ({ id, content }) => {
-  await fetch(`${apiUrl}/${id}`, {
+const editComment = async ({ documentId, content }) => {
+  const res = await fetch(`${apiUrl}/${documentId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -119,17 +120,25 @@ const editComment = async ({ id, content }) => {
       },
     }),
   });
-  fetchComments();
+  if (res.ok) {
+    fetchComments();
+  } else {
+    console.error('Failed to edit comment');
+  }
 };
 
 // DELETE
-const deleteComment = async (id) => {
-  await fetch(`${apiUrl}/${id}`, {
+const deleteComment = async (documentId) => {
+  const res = await fetch(`${apiUrl}/${documentId}`, {
     method: 'DELETE',
   });
+  if (!res.ok) {
+    console.error('Failed to delete comment');
+    return;
+  }
   const removeComment = (list) => {
     return list
-      .filter((item) => item.id !== id)
+      .filter((item) => item.documentId !== documentId)
       .map((item) => ({
         ...item,
         replies: item.replies ? removeComment(item.replies) : [],

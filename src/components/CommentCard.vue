@@ -32,7 +32,7 @@
       <!-- Edit & Delete buttons -->
       <div v-if="isReply && isOwner" class="flex gap-2 absolute top-2 right-4">
         <span
-          @click="emit('openModal', comment.id)"
+          @click="emit('openModal', comment.documentId)"
           class="flex items-center font-medium gap-1 text-red-500 cursor-pointer">
           <Trash2 class="w-4 h-4" /> Delete
         </span>
@@ -192,7 +192,7 @@ const saveEdit = () => {
   if (!editText.value.trim()) return;
 
   emit('edit', {
-    id: props.comment.id,
+    documentId: props.comment.documentId,
     content: editText.value,
   });
 
