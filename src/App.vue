@@ -41,7 +41,7 @@ const replyTree = (data, parentId = null) => {
     .filter((item) => item.parent_id === parentId)
     .map((item) => ({
       ...item,
-      time: formatTime(item.created_at),
+      time: formatTime(item.createdAt),
       replies: replyTree(data, item.id), // recursion
     }));
 };
@@ -52,11 +52,11 @@ const fetchComments = async () => {
   console.log(jsonData);
   const formatted = jsonData.data.map((item) => ({
     id: item.id,
-    username: item.attributes.username,
-    avatar: item.attributes.avatar,
-    content: item.attributes.content,
-    created_at: item.attributes.created_at,
-    parent_id: item.attributes.parent?.data?.id || null,
+    username: item.username,
+    avatar: item.avatar,
+    content: item.content,
+    created_at: item.createdAt,
+    parent_id: item.parent?.id || null,
   }));
   console.log(formatted);
   comments.value = replyTree(formatted);
@@ -83,7 +83,6 @@ const addComment = async (data) => {
     username: newComment.data.attributes.username,
     avatar: newComment.data.attributes.avatar,
     content: newComment.data.attributes.content,
-    created_at: newComment.data.attributes.created_at,
     parent_id: null,
     time: formatTime(newComment.data.attributes.createdAt),
   });
