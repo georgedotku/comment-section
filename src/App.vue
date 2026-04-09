@@ -47,10 +47,6 @@ const commentTree = (data, parentId = null) => {
     }));
 };
 
-watch(comments, (data) => {
-  console.log('Comments');
-  console.log(data);
-});
 // GET COMMENTS
 const fetchComments = async () => {
   const res = await fetch(`${apiUrl}?populate=*`);
@@ -66,7 +62,6 @@ const fetchComments = async () => {
     parent_id: item.parent?.id || null,
   }));
   console.log(formatted);
-
   comments.value = commentTree(formatted);
 };
 onMounted(fetchComments);
@@ -165,10 +160,10 @@ const formatTime = (date) => {
         @delete="
           (id) => {
             deleteComment(id);
-            showModal.value = false;
+            showModal = false;
           }
         "
-        @cancel="showModal.value = false" />
+        @cancel="showModal = false" />
     </div>
     <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
       <div v-for="comment in comments" :key="comment.id">
@@ -186,7 +181,7 @@ const formatTime = (date) => {
         <div
           v-for="user in users"
           :key="user.id"
-          @click="currentUser.value = user"
+          @click="currentUser = user"
           class="cursor-pointer flex items-center gap-2 p-2 border rounded-lg"
           :class="currentUser.id === user.id ? 'border-blue-500' : ''">
           <img :src="user.avatar" class="h-8 w-8 rounded-full" />
