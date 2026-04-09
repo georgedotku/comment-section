@@ -114,6 +114,7 @@
       :key="reply.id"
       :comment="reply"
       :isReply="true"
+      :users="users"
       :currentUser="currentUser"
       @openModal="$emit('openModal', $event)"
       @delete="$emit('delete', $event)"
@@ -142,6 +143,7 @@ const replyTo = ref(null);
 const replyText = ref('');
 const isEditing = ref(false);
 const editText = ref('');
+const isUser = ref([]);
 
 const isOwner = computed(
   () => props.comment.username === props.currentUser.username,
@@ -153,7 +155,12 @@ const highlightMention = (text) => {
     '<span class="text-blue-700 font-bold">@$1</span>',
   );
 };
-
+const upVote = () => {
+  // Implement vote logic here
+};
+const downVote = () => {
+  // Implement vote logic here
+};
 const toggleReply = async (user) => {
   // close the reply box
   if (isReplying.value) {

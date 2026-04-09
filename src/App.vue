@@ -180,6 +180,7 @@ const formatTime = (date) => {
         <CommentCard
           :comment="comment"
           :isReply="false"
+          :users="users"
           :currentUser="currentUser"
           @openModal="toggleModal"
           @delete="deleteComment"
