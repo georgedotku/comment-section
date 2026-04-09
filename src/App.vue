@@ -36,6 +36,7 @@ const users = [
 ];
 const currentUser = ref(users[0]); // Simulate logged-in user
 const replyTree = (data, parentId = null) => {
+  console.log(data);
   return data
     .filter((item) => item.parent_id === parentId)
     .map((item) => ({
@@ -46,14 +47,18 @@ const replyTree = (data, parentId = null) => {
 };
 
 const fetchComments = async () => {
-  const res = await fetch(`${apiUrl}`);
-  const dataJson = await res.json();
-  console.log('Fetched comments:', dataJson);
-  const formatted = dataJson.data.map((item) => ({
+  const res = await fetch(`${apiUrl}?populate=*`);
+  const jsonData = await res.json();
+  console.log(jsonData);
+  const formatted = jsonData.data.map((item) => ({
     id: item.id,
-    ...item.attributes,
+    username: item.attributes.username,
+    avatar: item.attributes.avatar,
+    content: item.attributes.content,
+    created_at: item.attributes.created_at,
     parent_id: item.attributes.parent?.data?.id || null,
   }));
+  console.log(formatted);
   comments.value = replyTree(formatted);
 };
 onMounted(fetchComments);
@@ -64,17 +69,23 @@ const addComment = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: data.user_name,
-      avatar: data.avatar,
-      content: data.content,
-      parent: null,
+      data: {
+        username: data.username,
+        avatar: data.avatar,
+        content: data.content,
+        parent: null,
+      },
     }),
   });
-
   const newComment = await res.json();
   comments.value.push({
-    ...newComment,
-    time: formatTime(newComment.created_at),
+    id: newComment.data.id,
+    username: newComment.data.attributes.username,
+    avatar: newComment.data.attributes.avatar,
+    content: newComment.data.attributes.content,
+    created_at: newComment.data.attributes.created_at,
+    parent_id: null,
+    time: formatTime(newComment.data.attributes.createdAt),
   });
 };
 
@@ -84,10 +95,12 @@ const addReply = async (data) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_name: data.user_name,
-      avatar: data.avatar,
-      content: data.content,
-      parent: data.parent_id,
+      data: {
+        username: data.username,
+        avatar: data.avatar,
+        content: data.content,
+        parent: data.parent_id,
+      },
     }),
   });
   if (res.ok) {
@@ -102,7 +115,11 @@ const editComment = async ({ id, content }) => {
   await fetch(`${apiUrl}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({
+      data: {
+        content,
+      },
+    }),
   });
   fetchComments();
 };

@@ -18,7 +18,7 @@
         alt="img"
         class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105" />
       <div class="flex gap-2 sm:items-start">
-        <p class="font-medium">{{ comment.user_name }}</p>
+        <p class="font-medium">{{ comment.username }}</p>
         <span
           v-if="isReply && isOwner"
           class="bg-blue-500 text-white text-[12px] px-2 py-0.5 rounded font-medium">
@@ -144,7 +144,7 @@ const isEditing = ref(false);
 const editText = ref('');
 
 const isOwner = computed(
-  () => props.comment.user_name === props.currentUser.username,
+  () => props.comment.username === props.currentUser.username,
 );
 const highlightMention = (text) => {
   if (!text) return '';
@@ -163,8 +163,8 @@ const toggleReply = async (user) => {
     return;
   }
   isReplying.value = true;
-  replyTo.value = user.user_name;
-  replyText.value = `@${user.user_name} `;
+  replyTo.value = user.username;
+  replyText.value = `@${user.username} `;
 };
 const submitReply = () => {
   if (replyText.value.trim() === '') return;
@@ -172,7 +172,7 @@ const submitReply = () => {
   emit('reply', {
     content: replyText.value,
     parent_id: props.comment.id,
-    user_name: props.currentUser.username,
+    username: props.currentUser.username,
     avatar: props.currentUser.avatar,
   });
   // Reset the reply box

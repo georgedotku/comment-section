@@ -36,7 +36,7 @@ const handleSubmit = () => {
   if (!input.value.trim()) return; // prevent empty comments
   emit('add-comment', {
     content: input.value,
-    user_name: props.currentUser.username,
+    username: props.currentUser.username,
     avatar: props.currentUser.avatar,
   });
   input.value = ''; // clear input after submission
