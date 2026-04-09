@@ -57,7 +57,7 @@
       <div v-if="isEditing" class="flex items-center gap-3">
         <textarea
           v-model="editText"
-          class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg"></textarea>
+          class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg resize-none"></textarea>
 
         <div class="flex gap-2 flex-col justify-end">
           <button @click="cancelEdit" class="px-3 py-1 rounded bg-gray-300">

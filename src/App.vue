@@ -2,7 +2,7 @@
 import CommentCard from './components/CommentCard.vue';
 import CommentBox from './components/CommentBox.vue';
 import Modal from './components/Modal.vue';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 const comments = ref([]);
@@ -35,17 +35,23 @@ const users = [
   },
 ];
 const currentUser = ref(users[0]); // Simulate logged-in user
-const replyTree = (data, parentId = null) => {
+
+const commentTree = (data, parentId = null) => {
   console.log(data);
   return data
     .filter((item) => item.parent_id === parentId)
     .map((item) => ({
       ...item,
-      time: formatTime(item.createdAt),
-      replies: replyTree(data, item.id), // recursion
+      time: formatTime(item.created_at),
+      replies: commentTree(data, item.id), // recursion
     }));
 };
 
+watch(comments, (data) => {
+  console.log('Comments');
+  console.log(data);
+});
+// GET COMMENTS
 const fetchComments = async () => {
   const res = await fetch(`${apiUrl}?populate=*`);
   const jsonData = await res.json();
@@ -56,10 +62,12 @@ const fetchComments = async () => {
     avatar: item.avatar,
     content: item.content,
     created_at: item.createdAt,
+    time: formatTime(item.createdAt),
     parent_id: item.parent?.id || null,
   }));
   console.log(formatted);
-  comments.value = replyTree(formatted);
+
+  comments.value = commentTree(formatted);
 };
 onMounted(fetchComments);
 
@@ -161,10 +169,10 @@ const formatTime = (date) => {
         @delete="
           (id) => {
             deleteComment(id);
-            showModal = false;
+            showModal.value = false;
           }
         "
-        @cancel="showModal = false" />
+        @cancel="showModal.value = false" />
     </div>
     <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
       <div v-for="comment in comments" :key="comment.id">
@@ -182,7 +190,7 @@ const formatTime = (date) => {
         <div
           v-for="user in users"
           :key="user.id"
-          @click="currentUser = user"
+          @click="currentUser.value = user"
           class="cursor-pointer flex items-center gap-2 p-2 border rounded-lg"
           :class="currentUser.id === user.id ? 'border-blue-500' : ''">
           <img :src="user.avatar" class="h-8 w-8 rounded-full" />

@@ -12,7 +12,7 @@
         v-model="input"
         type="text"
         placeholder="Add a comment"
-        class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg"></textarea>
+        class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 resize-none rounded-lg"></textarea>
       <!-- Button -->
       <button
         @click="handleSubmit"
