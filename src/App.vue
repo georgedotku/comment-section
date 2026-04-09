@@ -85,15 +85,11 @@ const addComment = async (data) => {
       },
     }),
   });
-  const newComment = await res.json();
-  comments.value.push({
-    id: newComment.data.id,
-    username: newComment.data.attributes.username,
-    avatar: newComment.data.attributes.avatar,
-    content: newComment.data.attributes.content,
-    parent_id: null,
-    time: formatTime(newComment.data.attributes.createdAt),
-  });
+  if (res.ok) {
+    fetchComments();
+  } else {
+    console.error('Failed to add comment');
+  }
 };
 
 // ADD REPLY
