@@ -162,7 +162,7 @@ const formatTime = (date) => {
 </script>
 
 <template>
-  <div class="bg-[#E7EDE7] w-full min-h-screen">
+  <div class="bg-[#2c2a2a] w-full min-h-screen">
     <div v-if="showModal">
       <Modal
         :comment="selectedComment"
@@ -187,7 +187,8 @@ const formatTime = (date) => {
           @edit="editComment"
           @reply="addReply" />
       </div>
-      <div class="flex gap-3 mb-4">
+
+      <div class="border bg-stone-800 flex gap-3 mb-4">
         <div
           v-for="user in users"
           :key="user.id"

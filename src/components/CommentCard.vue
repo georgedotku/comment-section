@@ -5,9 +5,19 @@
     :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
     <!-- Vote -->
     <div class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 rounded">
-      <button @click="count++" class="font-bold opacity-30">+</button>
+      <button
+        @click="count++"
+        :disabled="count === users.length"
+        class="font-bold opacity-30">
+        +
+      </button>
       <span class="font-bold text-blue-500">{{ count }}</span>
-      <button @click="count--" class="font-bold opacity-30">-</button>
+      <button
+        @click="count--"
+        :disabled="count === 0"
+        class="font-bold opacity-30">
+        -
+      </button>
     </div>
 
     <!-- User Info -->
@@ -128,6 +138,7 @@ import { Reply, Edit2, Trash2 } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 const props = defineProps({
   comment: Object,
+  users: Array,
   currentUser: Object,
   isReply: Boolean,
   replies: Array,
@@ -156,9 +167,11 @@ const highlightMention = (text) => {
   );
 };
 const upVote = () => {
+  count.value++;
   // Implement vote logic here
 };
 const downVote = () => {
+  count.value--;
   // Implement vote logic here
 };
 const toggleReply = async (user) => {

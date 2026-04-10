@@ -1,4 +1,4 @@
 @import 'tailwindcss';
 body {
-  @apply bg-[#E7EDE7] w-full h-screen;
+  @apply bg-[#000000] w-full h-screen;
 }
