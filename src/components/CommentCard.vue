@@ -21,8 +21,7 @@
     </div>
 
     <!-- User Info -->
-    <div
-      class="group flex mx-10 absolute top-4 left-4 w-[90%] items-center gap-3">
+    <div class="group flex mx-10 items-center gap-3">
       <img
         :src="comment.avatar"
         alt="img"
@@ -85,10 +84,6 @@
       <p v-else class="text-gray-500">
         <span v-html="highlightMention(comment.content)"></span>
       </p>
-
-      <!-- <p class="text-gray-500">
-        <span v-html="highlightMention(comment.content)"></span>
-      </p> -->
     </div>
   </div>
   <!-- Reply Box -->

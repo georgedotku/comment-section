@@ -1,6 +1,7 @@
 <script setup>
 import CommentCard from './components/CommentCard.vue';
 import CommentBox from './components/CommentBox.vue';
+import Home from './components/Home.vue';
 import Modal from './components/Modal.vue';
 import { ref, onMounted, computed, watch } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -162,21 +163,57 @@ const formatTime = (date) => {
 </script>
 
 <template>
-  <div class="bg-[#2c2a2a] w-full min-h-screen">
-    <div v-if="showModal">
-      <Modal
-        :comment="selectedComment"
-        @delete="
-          (id) => {
-            deleteComment(id);
-            showModal = false;
-          }
-        "
-        @cancel="showModal = false" />
-    </div>
-    <div class="flex flex-col gap-4 w-1/2 mx-auto py-4">
-      <div v-for="comment in comments" :key="comment.id">
-        <!-- MAIN COMMENT -->
+  <div class="bg-[#E7EDE7] w-full min-h-screen border">
+    <Home :users="users" :currentUser="currentUser" />
+    <!-- <div class="flex flex-col gap-4 w-full max-w-2xl mx-auto px-3 sm:px-4 py-4">
+        <div v-if="showModal">
+            <Modal
+            :comment="selectedComment"
+            @delete="
+                (id) => {
+                deleteComment(id);
+                showModal = false;
+                }
+            "
+            @cancel="showModal = false" />
+        </div> 
+        <div v-for="comment in comments" :key="comment.id">
+            <CommentCard
+            :comment="comment"
+            :isReply="false"
+            :users="users"
+            :currentUser="currentUser"
+            @openModal="toggleModal"
+            @delete="deleteComment"
+            @edit="editComment"
+            @reply="addReply" />
+        </div> 
+    
+        <div class="border bg-white flex gap-3 mb-4">
+            <div
+            v-for="user in users"
+            :key="user.id"
+            @click="currentUser = user"
+            class="cursor-pointer flex items-center gap-2 p-2 border rounded-lg"
+            :class="currentUser.id === user.id ? 'border-blue-500' : ''">
+            <img :src="user.avatar" class="h-8 w-8 rounded-full" />
+            <span>{{ user.username }}</span>
+            </div>
+        </div> 
+        <CommentBox :currentUser="currentUser" @add-comment="addComment" />
+     <div class="flex flex-col gap-4 w-full max-w-2xl mx-auto px-3 sm:px-4 py-4">
+       <div v-if="showModal">
+        <Modal
+          :comment="selectedComment"
+          @delete="
+            (id) => {
+              deleteComment(id);
+              showModal = false;
+            }
+          "
+          @cancel="showModal = false" />
+      </div> 
+       <div v-for="comment in comments" :key="comment.id">
         <CommentCard
           :comment="comment"
           :isReply="false"
@@ -186,9 +223,9 @@ const formatTime = (date) => {
           @delete="deleteComment"
           @edit="editComment"
           @reply="addReply" />
-      </div>
+      </div> 
 
-      <div class="border bg-stone-800 flex gap-3 mb-4">
+      <div class="border bg-white flex gap-3 mb-4">
         <div
           v-for="user in users"
           :key="user.id"
@@ -198,9 +235,8 @@ const formatTime = (date) => {
           <img :src="user.avatar" class="h-8 w-8 rounded-full" />
           <span>{{ user.username }}</span>
         </div>
-      </div>
-      <!-- INPUT -->
-      <CommentBox :currentUser="currentUser" @add-comment="addComment" />
-    </div>
+      </div> 
+       <CommentBox :currentUser="currentUser" @add-comment="addComment" /> 
+    </div> -->
   </div>
 </template>
