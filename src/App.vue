@@ -163,7 +163,7 @@ const formatTime = (date) => {
 </script>
 
 <template>
-  <div class="bg-[#E7EDE7] w-full min-h-screen border">
+  <div class="bg-[#E7EDE7] w-full h-screen">
     <Home :users="users" :currentUser="currentUser" />
     <!-- <div class="flex flex-col gap-4 w-full max-w-2xl mx-auto px-3 sm:px-4 py-4">
         <div v-if="showModal">
