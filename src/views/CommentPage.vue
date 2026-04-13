@@ -50,7 +50,7 @@ const apiUrl =
 //   router.push({ name: 'comment', params: { id: user.id } });
 // };
 const commentTree = (data, parentId = null, level = 0) => {
-  console.log(data);
+  console.log('data:', data);
   return data
     .filter((item) => item.parent_id === parentId)
     .map((item) => ({
@@ -76,7 +76,7 @@ const fetchComments = async () => {
     time: formatTime(item.createdAt),
     parent_id: item.parent?.id || null,
   }));
-  console.log(formatted);
+  console.log('formatted:', formatted);
   comments.value = commentTree(formatted);
 };
 onMounted(fetchComments);
