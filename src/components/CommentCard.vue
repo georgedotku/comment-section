@@ -1,6 +1,5 @@
 <template>
   <div class="relative">
-    <!-- 🔴 VERTICAL LINE (ONLY FOR REPLIES) -->
     <div
       v-if="comment.level > 0"
       class="absolute left-0 top-0 w-0.5 bg-black opacity-30"
@@ -14,7 +13,6 @@
       class="bg-inherit h-50 p-4 relative rounded-lg ring-2 ring-gray-300 shadow-xl/30"
       :style="{
         marginLeft: `${Math.min(comment.level, 4) * 20}px`,
-        width: `calc(100% - ${Math.min(comment.level, 4) * 20}px)`,
       }"
       :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
       <!-- User Info -->
