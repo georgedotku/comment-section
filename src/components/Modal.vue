@@ -18,7 +18,7 @@ const handleDelete = () => {
         </button>
         <button
           @click="handleDelete"
-          class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600">
+          class="px-4 py-2 rounded bg-red-500 text-white hover:bg-gray-700">
           Delete
         </button>
       </div>

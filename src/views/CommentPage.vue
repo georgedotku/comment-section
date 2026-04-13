@@ -2,14 +2,21 @@
 import CommentCard from '../components/CommentCard.vue';
 import CommentBox from '../components/CommentBox.vue';
 import Modal from '../components/Modal.vue';
+import { useRouter } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
+const router = useRouter();
 const props = defineProps({
   id: String,
+  users: Array,
 });
 const comments = ref([]);
 const selectedComment = ref(null);
 const showModal = ref(false);
+const showMenu = ref(false);
+const currentUser = ref(
+  JSON.parse(localStorage.getItem('currentUser')) || null,
+);
 const apiUrl =
   import.meta.env.MODE === 'development'
     ? 'http://localhost:1337/api/comments'
@@ -36,16 +43,22 @@ const users = [
     avatar: 'https://i.pravatar.cc/100?img=4',
   },
 ];
-const currentUser = ref(users[0]); // Simulate logged-in user
 
-const commentTree = (data, parentId = null) => {
+const switchUser = (user) => {
+  currentUser.value = user;
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  showMenu.value = false;
+  router.push({ name: 'comment', params: { id: user.id } });
+};
+const commentTree = (data, parentId = null, level = 0) => {
   console.log(data);
   return data
     .filter((item) => item.parent_id === parentId)
     .map((item) => ({
       ...item,
+      level,
       time: formatTime(item.created_at),
-      replies: commentTree(data, item.id), // recursion
+      replies: commentTree(data, item.id, level + 1), // recursion
     }));
 };
 
@@ -164,31 +177,57 @@ const formatTime = (date) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 w-full max-w-2xl mx-auto px-3 sm:px-4 py-4">
-    <div v-if="showModal">
-      <Modal
-        :comment="selectedComment"
-        @delete="
-          (id) => {
-            deleteComment(id);
-            showModal = false;
-          }
-        "
-        @cancel="showModal = false" />
+  <div
+    @click="showMenu = !showMenu"
+    class="rounded-md bg-inherit text-black ring-1 ring-gray-300 shadow-xl/30 px-3 py-1 mb-4 fixed top-4 left-4 z-50 cursor-pointer">
+    SELECT USER
+  </div>
+  <div
+    v-if="showMenu"
+    class="fixed inset-0 bg-black/30 z-30"
+    @click="showMenu = false"></div>
+
+  <div
+    v-if="showMenu"
+    class="fixed top-0 left-0 h-64 w-64 bg-inherit shadow-xl z-40 p-4">
+    <h3 class="font-bold mt-4">SWITCH USER</h3>
+    <div
+      v-for="user in users"
+      :key="user.id"
+      @click="switchUser(user)"
+      class="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100">
+      <img :src="user.avatar" class="w-8 h-8 rounded-full" />
+      <span>{{ user.username }}</span>
     </div>
+  </div>
+  <div class="flex flex-col gap-4 w-full max-w-2xl mx-auto py-12 px-3 sm:px-4">
     <div v-for="comment in comments" :key="comment.id">
       <CommentCard
         :comment="comment"
         :isReply="false"
-        :users="users"
         :currentUser="currentUser"
         @openModal="toggleModal"
         @delete="deleteComment"
         @edit="editComment"
         @reply="addReply" />
     </div>
-
-    <!-- <div class="border bg-white flex gap-3 mb-4">
+    <CommentBox
+      v-if="currentUser"
+      :currentUser="currentUser"
+      @add-comment="addComment" />
+  </div>
+  <div v-if="showModal">
+    <Modal
+      :comment="selectedComment"
+      @delete="
+        (id) => {
+          deleteComment(id);
+          showModal = false;
+        }
+      "
+      @cancel="showModal = false" />
+  </div>
+  <!-- <div class="border bg-white flex gap-3 mb-4">
       <div
         v-for="user in users"
         :key="user.id"
@@ -199,6 +238,4 @@ const formatTime = (date) => {
         <span>{{ user.username }}</span>
       </div>
     </div> -->
-    <CommentBox :currentUser="currentUser" @add-comment="addComment" />
-  </div>
 </template>

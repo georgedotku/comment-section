@@ -16,17 +16,7 @@ const routes = [
     component: CommentPage,
     props: true,
   },
-  //   {
-  //     path: '/comment/:id',
-  //     name: 'comment',
-  //     component: CommentCard,
-  //   },
 
-  //   redirect
-  {
-    path: '/all-jobs',
-    redirect: '/jobs',
-  },
   //   catch all 404 - define a route that will catch all undefined paths and redirect to a NotFound component or a specific page
   {
     path: '/:catchAll(.*)',

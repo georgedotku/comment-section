@@ -1,99 +1,117 @@
 <template>
-  <!-- Card -->
-  <div
-    class="bg-white p-4 h-40 relative rounded-lg shadow-md transition-all duration-300"
-    :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
-    <!-- Vote -->
-    <div class="flex flex-col items-center bg-[#E7EDE7] w-6 py-2 rounded">
-      <button
-        @click="count++"
-        :disabled="count === users.length"
-        class="font-bold opacity-30">
-        +
-      </button>
-      <span class="font-bold text-blue-500">{{ count }}</span>
-      <button
-        @click="count--"
-        :disabled="count === 0"
-        class="font-bold opacity-30">
-        -
-      </button>
-    </div>
+  <div class="relative">
+    <!-- 🔴 VERTICAL LINE (ONLY FOR REPLIES) -->
+    <div
+      v-if="comment.level > 0"
+      class="absolute left-0 top-0 w-0.5 bg-black opacity-30"
+      :style="{
+        height: '100%',
+        left: `${(comment.level - 1) * 20}px`,
+      }"></div>
 
-    <!-- User Info -->
-    <div class="group flex mx-10 items-center gap-3">
-      <img
-        :src="comment.avatar"
-        alt="img"
-        class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105" />
-      <div class="flex gap-2 sm:items-start">
-        <p class="font-medium">{{ comment.username }}</p>
-        <span
-          v-if="isReply && isOwner"
-          class="bg-blue-500 text-white text-[12px] px-2 py-0.5 rounded font-medium">
-          you
-        </span>
-        <p class="text-muted-foreground font-medium opacity-30 mt-auto">
-          {{ comment.time }}
-        </p>
+    <!-- Card -->
+    <div
+      class="bg-inherit h-50 p-4 relative rounded-lg ring-2 ring-gray-300 shadow-xl/30"
+      :style="{
+        marginLeft: `${Math.min(comment.level, 4) * 20}px`,
+        width: `calc(100% - ${Math.min(comment.level, 4) * 20}px)`,
+      }"
+      :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
+      <!-- User Info -->
+      <div class="flex sm:mx-10 items-center gap-3">
+        <img
+          :src="comment.avatar"
+          alt="img"
+          class="h-12 w-12 rounded-full transition-transform duration-200 group-hover:scale-105" />
+        <div class="flex gap-2">
+          <p class="font-medium">{{ comment.username }}</p>
+          <span
+            v-if="isReply && isOwner"
+            class="bg-black text-white text-[12px] px-2 py-0.5 rounded font-medium">
+            you
+          </span>
+          <p class="text-muted-foreground font-medium opacity-30 mt-auto">
+            {{ comment.time }}
+          </p>
+        </div>
+        <!-- Comment -->
+        <div
+          class="absolute top-20 sm:mx-auto w-[87%] overflow-y-auto max-h-20">
+          <!-- EDIT MODE -->
+          <div v-if="isEditing" class="flex items-center gap-3">
+            <textarea
+              v-model="editText"
+              class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg resize-none"></textarea>
+            <div class="flex gap-2 flex-col justify-end">
+              <button
+                @click="cancelEdit"
+                class="px-3 py-1 rounded-lg bg-gray-300">
+                CANCEL
+              </button>
+              <button
+                @click="saveEdit"
+                class="px-3 py-1 rounded-lg bg-black text-white">
+                UPDATE
+              </button>
+            </div>
+          </div>
+
+          <p v-else class="text-gray-500 text-justify">
+            <span v-html="highlightMention(comment.content)"></span>
+          </p>
+        </div>
+        <!-- Vote -->
+        <div
+          class="flex absolute bottom-2 left-4 w-16 h-8 sm:w-6 sm:h-22 sm:bottom-auto sm:top-2 sm:flex-col items-center justify-center bg-inherit ring-1 ring-gray-300 px-4 gap-2 rounded">
+          <button
+            @click="upVote"
+            :class="userVote === 'up' ? 'text-gray-500' : 'text-black'"
+            :disabled="!props.currentUser"
+            class="text-black font-medium">
+            +
+          </button>
+          <span class="font-bold text-gray-500">{{ count }}</span>
+          <button
+            @click="downVote"
+            :class="userVote === 'down' ? 'text-gray-500' : 'text-black'"
+            :disabled="!props.currentUser"
+            class="text-black font-medium">
+            -
+          </button>
+        </div>
       </div>
-
       <!-- Edit & Delete buttons -->
-      <div v-if="isReply && isOwner" class="flex gap-2 absolute top-2 right-4">
+      <div
+        v-if="isOwner"
+        class="flex gap-2 w-fit absolute bottom-2 sm:bottom-auto sm:top-4 sm:mt-3 right-4">
         <span
           @click="emit('openModal', comment.documentId)"
-          class="flex items-center font-medium gap-1 text-red-500 cursor-pointer">
+          class="flex items-center font-medium gap-1 text-gray-500 cursor-pointer">
           <Trash2 class="w-4 h-4" /> Delete
         </span>
         <span
           @click="handleEdit"
-          class="flex items-center font-medium gap-1 text-blue-500 cursor-pointer">
+          class="flex items-center font-medium gap-1 text-gray-500 cursor-pointer">
           <Edit2 class="w-4 h-4" /> Edit
         </span>
       </div>
       <!-- Reply button -->
       <span
         v-else
-        @click="toggleReply(comment)"
-        class="flex items-center gap-1 font-bold text-blue-500 absolute top-2 right-4 cursor-pointer">
+        @click="currentUser && toggleReply(comment)"
+        class="flex items-center w-fit gap-1 font-bold text-gray-500 absolute bottom-2 right-4 sm:bottom-auto sm:top-4 sm:mt-3 cursor-pointer">
         <Reply class="w-5 h-5" /> Reply
       </span>
-    </div>
-
-    <!-- Comment -->
-    <div class="absolute top-20 mx-10 overflow-y-auto w-[90%] max-h-20">
-      <!-- EDIT MODE -->
-      <div v-if="isEditing" class="flex items-center gap-3">
-        <textarea
-          v-model="editText"
-          class="flex-1 min-w-0 h-20 px-3 outline-2 outline-gray-500/30 rounded-lg resize-none"></textarea>
-
-        <div class="flex gap-2 flex-col justify-end">
-          <button @click="cancelEdit" class="px-3 py-1 rounded bg-gray-300">
-            CANCEL
-          </button>
-
-          <button
-            @click="saveEdit"
-            class="px-3 py-1 rounded bg-blue-500 text-white">
-            UPDATE
-          </button>
-        </div>
-      </div>
-
-      <p v-else class="text-gray-500">
-        <span v-html="highlightMention(comment.content)"></span>
-      </p>
     </div>
   </div>
   <!-- Reply Box -->
   <div
     v-if="isReplying"
-    class="bg-white rounded-lg p-4 mt-4 ml-auto"
+    class="bg-inherit ring-2 ring-gray-300 shadow-xl/30 rounded-lg p-4 mt-4 ml-auto"
     :class="[isReply ? 'w-[90%] ml-auto' : 'w-full']">
     <div class="flex items-center gap-3">
       <img
-        :src="currentUser.avatar"
+        :src="currentUser?.avatar"
         alt="img"
         class="h-12 w-12 mb-auto rounded-full transition-transform duration-200 hover:scale-105 active:scale-95" />
       <!-- Input -->
@@ -107,7 +125,7 @@
       <button
         @click="submitReply"
         type="submit"
-        class="bg-blue-500 text-white px-4 py-2 mb-auto rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        class="bg-black text-white px-4 py-2 mb-auto rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
         REPLY
       </button>
     </div>
@@ -119,7 +137,6 @@
       :key="reply.id"
       :comment="reply"
       :isReply="true"
-      :users="users"
       :currentUser="currentUser"
       @openModal="$emit('openModal', $event)"
       @delete="$emit('delete', $event)"
@@ -130,10 +147,9 @@
 
 <script setup>
 import { Reply, Edit2, Trash2 } from 'lucide-vue-next';
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 const props = defineProps({
   comment: Object,
-  users: Array,
   currentUser: Object,
   isReply: Boolean,
   replies: Array,
@@ -144,30 +160,84 @@ defineOptions({
 const emit = defineEmits(['edit', 'delete', 'reply', 'openModal']);
 
 const count = ref(0);
+const votes = ref({}); // { commentId: 'up' | 'down' }
 const isReplying = ref(false);
 const replyTo = ref(null);
 const replyText = ref('');
 const isEditing = ref(false);
 const editText = ref('');
-const isUser = ref([]);
 
 const isOwner = computed(
-  () => props.comment.username === props.currentUser.username,
+  () =>
+    props.currentUser && props.comment.username === props.currentUser.username,
 );
+const storageKey = `votes-${props.comment.id}`;
+
+onMounted(() => {
+  const saved = JSON.parse(localStorage.getItem(storageKey));
+  if (saved) {
+    count.value = saved.count;
+    votes.value = saved.votes;
+  }
+});
+watch([count, votes], () => {
+  localStorage.setItem(
+    storageKey,
+    JSON.stringify({
+      count: count.value,
+      votes: votes.value,
+    }),
+  );
+});
+const userVote = computed(() => {
+  return props.currentUser ? votes.value[props.currentUser.id] : null;
+});
+const upVote = () => {
+  if (!props.currentUser) return;
+
+  const userId = props.currentUser.id;
+  const current = votes.value[userId];
+
+  if (current === 'up') {
+    // undo
+    count.value--;
+    delete votes.value[userId];
+  } else if (current === 'down') {
+    // switch
+    count.value += 2;
+    votes.value[userId] = 'up';
+  } else {
+    // new vote
+    count.value++;
+    votes.value[userId] = 'up';
+  }
+};
+const downVote = () => {
+  if (!props.currentUser) return;
+
+  const userId = props.currentUser.id;
+  const current = votes.value[userId];
+
+  if (current === 'down') {
+    // undo
+    count.value++;
+    delete votes.value[userId];
+  } else if (current === 'up') {
+    // switch
+    count.value -= 2;
+    votes.value[userId] = 'down';
+  } else {
+    // new vote
+    count.value--;
+    votes.value[userId] = 'down';
+  }
+};
 const highlightMention = (text) => {
   if (!text) return '';
   return text.replace(
     /@(\w+)/g,
     '<span class="text-blue-700 font-bold">@$1</span>',
   );
-};
-const upVote = () => {
-  count.value++;
-  // Implement vote logic here
-};
-const downVote = () => {
-  count.value--;
-  // Implement vote logic here
 };
 const toggleReply = async (user) => {
   // close the reply box
@@ -214,6 +284,6 @@ const saveEdit = () => {
   isEditing.value = false;
 };
 const handleDelete = () => {
-  emit('delete', props.comment.id);
+  emit('delete', props.comment.documentId);
 };
 </script>
