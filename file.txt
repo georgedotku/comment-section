@@ -1,0 +1,23 @@
+  <div
+    @click="showMenu = !showMenu"
+    class="rounded-md bg-inherit text-black ring-1 ring-gray-300 shadow-xl/30 px-3 py-1 mb-4 fixed top-4 left-4 z-50 cursor-pointer">
+    SELECT USER
+  </div>
+  <div
+    v-if="showMenu"
+    class="fixed inset-0 bg-black/30 z-30"
+    @click="showMenu = false"></div>
+
+  <div
+    v-if="showMenu"
+    class="fixed top-0 left-0 h-64 w-64 bg-inherit shadow-xl z-40 p-4">
+    <h3 class="font-bold mt-4">SWITCH USER</h3>
+    <div
+      v-for="user in users"
+      :key="user.id"
+      @click="switchUser(user)"
+      class="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100">
+      <img :src="user.avatar" class="w-8 h-8 rounded-full" />
+      <span>{{ user.username }}</span>
+    </div>
+  </div>

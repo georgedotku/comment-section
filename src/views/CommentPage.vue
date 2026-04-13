@@ -2,6 +2,7 @@
 import CommentCard from '../components/CommentCard.vue';
 import CommentBox from '../components/CommentBox.vue';
 import Modal from '../components/Modal.vue';
+import { ArrowLeft } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -9,47 +10,45 @@ const router = useRouter();
 const props = defineProps({
   id: String,
   users: Array,
+  currentUser: Object,
 });
 const comments = ref([]);
 const selectedComment = ref(null);
 const showModal = ref(false);
 const showMenu = ref(false);
-const currentUser = ref(
-  JSON.parse(localStorage.getItem('currentUser')) || null,
-);
 const apiUrl =
   import.meta.env.MODE === 'development'
     ? 'http://localhost:1337/api/comments'
     : 'https://comments-apiv2.onrender.com/comments';
-const users = [
-  {
-    id: 1,
-    username: 'amyrobson',
-    avatar: 'https://i.pravatar.cc/100?img=1',
-  },
-  {
-    id: 2,
-    username: 'maxblagun',
-    avatar: 'https://i.pravatar.cc/100?img=2',
-  },
-  {
-    id: 3,
-    username: 'ramsesmiron',
-    avatar: 'https://i.pravatar.cc/100?img=3',
-  },
-  {
-    id: 4,
-    username: 'juliusomo',
-    avatar: 'https://i.pravatar.cc/100?img=4',
-  },
-];
+// const users = [
+//   {
+//     id: 1,
+//     username: 'amyrobson',
+//     avatar: 'https://i.pravatar.cc/100?img=1',
+//   },
+//   {
+//     id: 2,
+//     username: 'maxblagun',
+//     avatar: 'https://i.pravatar.cc/100?img=2',
+//   },
+//   {
+//     id: 3,
+//     username: 'ramsesmiron',
+//     avatar: 'https://i.pravatar.cc/100?img=3',
+//   },
+//   {
+//     id: 4,
+//     username: 'juliusomo',
+//     avatar: 'https://i.pravatar.cc/100?img=4',
+//   },
+// ];
 
-const switchUser = (user) => {
-  currentUser.value = user;
-  localStorage.setItem('currentUser', JSON.stringify(user));
-  showMenu.value = false;
-  router.push({ name: 'comment', params: { id: user.id } });
-};
+// const switchUser = (user) => {
+//   currentUser.value = user;
+//   localStorage.setItem('currentUser', JSON.stringify(user));
+//   showMenu.value = false;
+//   router.push({ name: 'comment', params: { id: user.id } });
+// };
 const commentTree = (data, parentId = null, level = 0) => {
   console.log(data);
   return data
@@ -177,43 +176,25 @@ const formatTime = (date) => {
 </script>
 
 <template>
-  <div
-    @click="showMenu = !showMenu"
-    class="rounded-md bg-inherit text-black ring-1 ring-gray-300 shadow-xl/30 px-3 py-1 mb-4 fixed top-4 left-4 z-50 cursor-pointer">
-    SELECT USER
-  </div>
-  <div
-    v-if="showMenu"
-    class="fixed inset-0 bg-black/30 z-30"
-    @click="showMenu = false"></div>
-
-  <div
-    v-if="showMenu"
-    class="fixed top-0 left-0 h-64 w-64 bg-inherit shadow-xl z-40 p-4">
-    <h3 class="font-bold mt-4">SWITCH USER</h3>
-    <div
-      v-for="user in users"
-      :key="user.id"
-      @click="switchUser(user)"
-      class="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100">
-      <img :src="user.avatar" class="w-8 h-8 rounded-full" />
-      <span>{{ user.username }}</span>
-    </div>
-  </div>
+  <button
+    @click="$router.back()"
+    class="absolute top-4 left-4 p-1 sm:p-2 rounded-full bg-inherit shadow-xl/30 hover:bg-gray-200 transition-colors">
+    <ArrowLeft class="w-4 h-4" />
+  </button>
   <div class="flex flex-col gap-4 w-full max-w-2xl mx-auto py-12 px-3 sm:px-4">
     <div v-for="comment in comments" :key="comment.id">
       <CommentCard
         :comment="comment"
         :isReply="false"
-        :currentUser="currentUser"
+        :currentUser="props.currentUser"
         @openModal="toggleModal"
         @delete="deleteComment"
         @edit="editComment"
         @reply="addReply" />
     </div>
     <CommentBox
-      v-if="currentUser"
-      :currentUser="currentUser"
+      v-if="props.currentUser"
+      :currentUser="props.currentUser"
       @add-comment="addComment" />
   </div>
   <div v-if="showModal">
@@ -227,15 +208,4 @@ const formatTime = (date) => {
       "
       @cancel="showModal = false" />
   </div>
-  <!-- <div class="border bg-white flex gap-3 mb-4">
-      <div
-        v-for="user in users"
-        :key="user.id"
-        @click="currentUser = user"
-        class="cursor-pointer flex items-center gap-2 p-2 border rounded-lg"
-        :class="currentUser.id === user.id ? 'border-blue-500' : ''">
-        <img :src="user.avatar" class="h-8 w-8 rounded-full" />
-        <span>{{ user.username }}</span>
-      </div>
-    </div> -->
 </template>

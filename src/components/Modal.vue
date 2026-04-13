@@ -7,7 +7,8 @@ const handleDelete = () => {
 </script>
 <template>
   <div class="w-full h-screen bg-stone-900/50 top-0 fixed z-10">
-    <div class="p-20 w-100 mx-auto my-25 bg-white rounded-lg">
+    <div
+      class="p-20 w-100 mx-auto my-25 bg-[#E7EDE7] ring-2 ring-gray-300 shadow-xl/30 rounded-lg">
       <h2 class="text-2xl font-bold mb-4">Confirm Deletion</h2>
       <p class="mb-6">Are you sure you want to delete this comment?</p>
       <div class="flex items-center justify-center gap-4">
