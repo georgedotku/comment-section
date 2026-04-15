@@ -18,7 +18,7 @@ const showModal = ref(false);
 const showMenu = ref(false);
 const apiUrl =
   import.meta.env.MODE === 'development'
-    ? 'http://localhost:1337/api/comments'
+    ? 'http://localhost:1337/api/comment'
     : 'https://comments-apiv2.onrender.com/comments';
 // const users = [
 //   {
