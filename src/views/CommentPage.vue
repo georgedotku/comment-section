@@ -20,28 +20,6 @@ const apiUrl =
   import.meta.env.MODE === 'development'
     ? 'http://localhost:1337/api/comments'
     : 'https://comments-apiv2.onrender.com/comments';
-// const users = [
-//   {
-//     id: 1,
-//     username: 'amyrobson',
-//     avatar: 'https://i.pravatar.cc/100?img=1',
-//   },
-//   {
-//     id: 2,
-//     username: 'maxblagun',
-//     avatar: 'https://i.pravatar.cc/100?img=2',
-//   },
-//   {
-//     id: 3,
-//     username: 'ramsesmiron',
-//     avatar: 'https://i.pravatar.cc/100?img=3',
-//   },
-//   {
-//     id: 4,
-//     username: 'juliusomo',
-//     avatar: 'https://i.pravatar.cc/100?img=4',
-//   },
-// ];
 
 // const switchUser = (user) => {
 //   currentUser.value = user;
@@ -69,8 +47,8 @@ const fetchComments = async () => {
   const formatted = jsonData.data.map((item) => ({
     id: item.id,
     documentId: item.documentId,
-    username: item.username,
-    avatar: item.avatar,
+    username: item.author.username,
+    avatar: item.author.avatar,
     content: item.content,
     created_at: item.createdAt,
     time: formatTime(item.createdAt),
@@ -83,7 +61,7 @@ onMounted(fetchComments);
 
 // ADD COMMENT
 const addComment = async (data) => {
-  const res = await fetch(`${apiUrl}`, {
+  const res = await fetch(`${apiUrl}?populate=*`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -104,7 +82,7 @@ const addComment = async (data) => {
 
 // ADD REPLY
 const addReply = async (data) => {
-  const res = await fetch(`${apiUrl}`, {
+  const res = await fetch(`${apiUrl}?populate=*`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

@@ -8,28 +8,27 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 const users = ref([]);
 const apiUrl =
   import.meta.env.MODE === 'development'
     ? 'http://localhost:1337/api/comments'
     : 'https://comments-apiv2.onrender.com/comments';
-const fetchUsers = async () => {
-  try {
-    const response = await fetch(`${apiUrl}?populate=*`);
-    const data = await response.json();
-    users.value = data;
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  }
+// GET COMMENTS
+const fetchComments = async () => {
+  const res = await fetch(`${apiUrl}?populate=*`);
+  const jsonData = await res.json();
+  console.log(jsonData);
+  const formatted = jsonData.data.map((item) => ({
+    id: item.id,
+    documentId: item.documentId,
+    username: item.author.username,
+    avatar: item.author.avatar,
+  }));
+  console.log('formatted:', formatted);
+  users.value.push(...formatted);
 };
-fetchUsers();
-// const users = [
-//   { id: 1, username: 'amyrobson', avatar: 'https://i.pravatar.cc/100?img=1' },
-//   { id: 2, username: 'maxblagun', avatar: 'https://i.pravatar.cc/100?img=2' },
-//   { id: 3, username: 'ramsesmiron', avatar: 'https://i.pravatar.cc/100?img=3' },
-//   { id: 4, username: 'juliusomo', avatar: 'https://i.pravatar.cc/100?img=4' },
-// ];
+onMounted(fetchComments);
 
 const currentUser = ref(
   JSON.parse(localStorage.getItem('currentUser')) || null,
