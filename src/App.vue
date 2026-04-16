@@ -9,13 +9,27 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-
-const users = [
-  { id: 1, username: 'amyrobson', avatar: 'https://i.pravatar.cc/100?img=1' },
-  { id: 2, username: 'maxblagun', avatar: 'https://i.pravatar.cc/100?img=2' },
-  { id: 3, username: 'ramsesmiron', avatar: 'https://i.pravatar.cc/100?img=3' },
-  { id: 4, username: 'juliusomo', avatar: 'https://i.pravatar.cc/100?img=4' },
-];
+const users = ref([]);
+const apiUrl =
+  import.meta.env.MODE === 'development'
+    ? 'http://localhost:1337/api/comments'
+    : 'https://comments-apiv2.onrender.com/comments';
+const fetchUsers = async () => {
+  try {
+    const response = await fetch(`${apiUrl}?populate=*`);
+    const data = await response.json();
+    users.value = data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+};
+fetchUsers();
+// const users = [
+//   { id: 1, username: 'amyrobson', avatar: 'https://i.pravatar.cc/100?img=1' },
+//   { id: 2, username: 'maxblagun', avatar: 'https://i.pravatar.cc/100?img=2' },
+//   { id: 3, username: 'ramsesmiron', avatar: 'https://i.pravatar.cc/100?img=3' },
+//   { id: 4, username: 'juliusomo', avatar: 'https://i.pravatar.cc/100?img=4' },
+// ];
 
 const currentUser = ref(
   JSON.parse(localStorage.getItem('currentUser')) || null,

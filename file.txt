@@ -22,8 +22,7 @@
     </div>
   </div>
 
-
-  {
+{
   "data": [
     {
       "id": 101,
@@ -32,6 +31,19 @@
       "createdAt": "2026-04-15T14:34:00.492Z",
       "updatedAt": "2026-04-15T14:34:05.297Z",
       "publishedAt": "2026-04-15T14:34:05.316Z",
+      "author": {
+        "id": 1,
+        "documentId": "c7lc0a60tbhqqngnc0cya7yi",
+        "username": "gideon",
+        "email": "gideonnerd@gmail.com",
+        "provider": "local",
+        "confirmed": true,
+        "blocked": false,
+        "createdAt": "2026-04-15T13:50:06.717Z",
+        "updatedAt": "2026-04-16T10:51:21.038Z",
+        "publishedAt": "2026-04-16T10:51:21.023Z",
+        "avatar": "https://i.pravatar.cc/100?img=1"
+      },
       "parent": null,
       "replies": [
         {
@@ -59,6 +71,19 @@
       "createdAt": "2026-04-15T15:06:47.448Z",
       "updatedAt": "2026-04-15T15:06:51.322Z",
       "publishedAt": "2026-04-15T15:06:51.333Z",
+      "author": {
+        "id": 2,
+        "documentId": "scpcx006wmr21abak0qof7i1",
+        "username": "henry",
+        "email": "henrydoe@gmail.com",
+        "provider": "local",
+        "confirmed": true,
+        "blocked": false,
+        "createdAt": "2026-04-15T15:05:55.253Z",
+        "updatedAt": "2026-04-16T10:53:34.296Z",
+        "publishedAt": "2026-04-16T10:53:34.286Z",
+        "avatar": "https://i.pravatar.cc/100?img=2"
+      },
       "parent": {
         "id": 101,
         "documentId": "sez6au54yxi1059fvpca42c7",
@@ -76,6 +101,19 @@
       "createdAt": "2026-04-15T15:41:12.193Z",
       "updatedAt": "2026-04-15T15:41:14.291Z",
       "publishedAt": "2026-04-15T15:41:14.308Z",
+      "author": {
+        "id": 3,
+        "documentId": "jqpe1kofdotpe5veau48mfxr",
+        "username": "favor",
+        "email": "favordoe@gmail.com",
+        "provider": "local",
+        "confirmed": true,
+        "blocked": false,
+        "createdAt": "2026-04-15T15:28:12.487Z",
+        "updatedAt": "2026-04-16T10:53:48.283Z",
+        "publishedAt": "2026-04-16T10:53:48.274Z",
+        "avatar": "https://i.pravatar.cc/100?img=3"
+      },
       "parent": {
         "id": 101,
         "documentId": "sez6au54yxi1059fvpca42c7",
@@ -102,6 +140,19 @@
       "createdAt": "2026-04-15T16:12:47.467Z",
       "updatedAt": "2026-04-15T16:12:50.084Z",
       "publishedAt": "2026-04-15T16:12:50.094Z",
+      "author": {
+        "id": 4,
+        "documentId": "ziikqhg5c4y216sk96wtd47c",
+        "username": "susan",
+        "email": "susandoe@gmail.com",
+        "provider": "local",
+        "confirmed": true,
+        "blocked": false,
+        "createdAt": "2026-04-15T15:40:05.863Z",
+        "updatedAt": "2026-04-16T10:54:27.257Z",
+        "publishedAt": "2026-04-16T10:54:27.248Z",
+        "avatar": "https://i.pravatar.cc/100?img=4"
+      },
       "parent": {
         "id": 105,
         "documentId": "plocv0gf0zq7qyw0tf82l308",
