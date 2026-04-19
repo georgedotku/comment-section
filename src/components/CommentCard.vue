@@ -167,8 +167,7 @@ const isEditing = ref(false);
 const editText = ref('');
 
 const isOwner = computed(
-  () =>
-    props.currentUser && props.comment.username === props.currentUser.username,
+  () => props.currentUser && props.comment.authorId === props.currentUser.id,
 );
 const storageKey = `votes-${props.comment.id}`;
 
@@ -238,28 +237,27 @@ const highlightMention = (text) => {
     '<span class="text-blue-700 font-bold">@$1</span>',
   );
 };
-const toggleReply = async (user) => {
-  // close the reply box
+const toggleReply = (comment) => {
   if (isReplying.value) {
     isReplying.value = false;
     replyTo.value = null;
     replyText.value = '';
     return;
   }
+
   isReplying.value = true;
-  replyTo.value = user.username;
-  replyText.value = `@${user.username} `;
+  replyTo.value = comment.username;
+  replyText.value = `@${comment.username} `;
 };
 const submitReply = () => {
-  if (replyText.value.trim() === '') return;
+  if (!replyText.value.trim()) return;
 
   emit('reply', {
     content: replyText.value,
     parent_id: props.comment.id,
-    username: props.currentUser.username,
-    avatar: props.currentUser.avatar,
+    author_id: props.currentUser.id,
   });
-  // Reset the reply box
+
   isReplying.value = false;
   replyTo.value = null;
   replyText.value = '';

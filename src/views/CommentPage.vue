@@ -40,28 +40,26 @@ const commentTree = (data, parentId = null, level = 0) => {
 };
 
 // GET COMMENTS
-
 const fetchComments = async () => {
-  const res = await fetch(
-    `${apiUrl}?filters[parent][$null]=true&populate[author]=true&populate[replies][populate][author]=true`,
-  );
-
+  const res = await fetch(`${apiUrl}?populate[author]=true`);
   const jsonData = await res.json();
-
   const formatComment = (item, level = 0) => ({
     id: item.id,
+    authorId: item.author?.id,
     documentId: item.documentId,
-    username: item.author?.username || 'Anonymous',
-    avatar: item.author?.avatar || '',
+    username: item.author?.username,
+    avatar: item.author?.avatar,
     content: item.content,
-    created_at: item.createdAt,
     time: formatTime(item.createdAt),
     level,
     replies:
-      item.replies?.map((reply) => formatComment(reply, level + 1)) || [],
+      item.replies
+        ?.filter((reply) => reply.author)
+        .map((reply) => formatComment(reply, level + 1)) || [],
   });
-
-  comments.value = jsonData.data.map((item) => formatComment(item));
+  comments.value = jsonData.data
+    .filter((item) => item.author)
+    .map((item) => formatComment(item));
 };
 onMounted(fetchComments);
 // ADD COMMENT
