@@ -34,12 +34,13 @@ const props = defineProps({
 const emit = defineEmits(['add-comment']);
 const input = ref('');
 const handleSubmit = () => {
-  if (!input.value.trim()) return; // prevent empty comments
+  if (!input.value.trim()) return;
+
   emit('add-comment', {
     content: input.value,
-    username: props.currentUser.username,
-    avatar: props.currentUser.avatar,
+    author_id: props.currentUser.id,
   });
-  input.value = ''; // clear input after submission
+
+  input.value = '';
 };
 </script>

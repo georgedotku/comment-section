@@ -40,57 +40,64 @@ const commentTree = (data, parentId = null, level = 0) => {
 };
 
 // GET COMMENTS
+
 const fetchComments = async () => {
-  const res = await fetch(`${apiUrl}?populate=*`);
+  const res = await fetch(
+    `${apiUrl}?filters[parent][$null]=true&populate[author]=true&populate[replies][populate][author]=true`,
+  );
+
   const jsonData = await res.json();
-  console.log(jsonData);
-  const formatted = jsonData.data.map((item) => ({
+
+  const formatComment = (item, level = 0) => ({
     id: item.id,
     documentId: item.documentId,
-    username: item.author.username,
-    avatar: item.author.avatar,
+    username: item.author?.username || 'Anonymous',
+    avatar: item.author?.avatar || '',
     content: item.content,
     created_at: item.createdAt,
     time: formatTime(item.createdAt),
-    parent_id: item.parent?.id || null,
-  }));
-  console.log('formatted:', formatted);
-  comments.value = commentTree(formatted);
+    level,
+    replies:
+      item.replies?.map((reply) => formatComment(reply, level + 1)) || [],
+  });
+
+  comments.value = jsonData.data.map((item) => formatComment(item));
 };
 onMounted(fetchComments);
-
 // ADD COMMENT
-const addComment = async (data) => {
-  const res = await fetch(`${apiUrl}?populate=*`, {
+const addComment = async (payload) => {
+  const res = await fetch(apiUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({
       data: {
-        username: data.username,
-        avatar: data.avatar,
-        content: data.content,
-        parent: null,
+        content: payload.content,
+        parent: payload.parent_id || null,
+        author: payload.author_id,
       },
     }),
   });
-  if (res.ok) {
-    fetchComments();
-  } else {
+
+  if (!res.ok) {
     console.error('Failed to add comment');
+    return;
   }
+
+  await fetchComments();
 };
 
 // ADD REPLY
-const addReply = async (data) => {
-  const res = await fetch(`${apiUrl}?populate=*`, {
+const addReply = async (payload) => {
+  const res = await fetch(`${apiUrl}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       data: {
-        username: data.username,
-        avatar: data.avatar,
-        content: data.content,
-        parent: data.parent_id,
+        content: payload.content,
+        parent: payload.parent_id || null,
+        author: payload.author_id,
       },
     }),
   });
