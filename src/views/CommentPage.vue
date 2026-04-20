@@ -41,25 +41,25 @@ const commentTree = (data, parentId = null, level = 0) => {
 
 // GET COMMENTS
 const fetchComments = async () => {
-  const res = await fetch(`${apiUrl}?populate[author]=true`);
+  const res = await fetch(
+    `${apiUrl}?populate[author]=true&populate[parent]=true`,
+  );
   const jsonData = await res.json();
-  const formatComment = (item, level = 0) => ({
-    id: item.id,
-    authorId: item.author?.id,
-    documentId: item.documentId,
-    username: item.author?.username,
-    avatar: item.author?.avatar,
-    content: item.content,
-    time: formatTime(item.createdAt),
-    level,
-    replies:
-      item.replies
-        ?.filter((reply) => reply.author)
-        .map((reply) => formatComment(reply, level + 1)) || [],
-  });
-  comments.value = jsonData.data
+
+  const formatted = jsonData.data
     .filter((item) => item.author)
-    .map((item) => formatComment(item));
+    .map((item) => ({
+      id: item.id,
+      documentId: item.documentId,
+      authorId: item.author.id,
+      username: item.author.username,
+      avatar: item.author.avatar,
+      content: item.content,
+      created_at: item.createdAt,
+      parent_id: item.parent?.id || null,
+    }));
+
+  comments.value = commentTree(formatted);
 };
 onMounted(fetchComments);
 // ADD COMMENT
@@ -82,7 +82,6 @@ const addComment = async (payload) => {
     console.error('Failed to add comment');
     return;
   }
-
   await fetchComments();
 };
 
