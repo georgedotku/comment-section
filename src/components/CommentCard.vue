@@ -192,7 +192,6 @@ const userVote = computed(() => {
 });
 const upVote = () => {
   if (!props.currentUser) return;
-
   const userId = props.currentUser.id;
   const current = votes.value[userId];
 
