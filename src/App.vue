@@ -12,17 +12,29 @@ import { ref, watch, onMounted } from 'vue';
 const users = ref([]);
 
 const fetchUsers = async () => {
-  const res = await fetch('https://comments-api-strapi.onrender.com/api/users');
-  const jsonData = await res.json();
-  users.value = jsonData.map((user) => ({
-    id: user.id,
-    username: user.username,
-    avatar: user.avatar,
-    email: user.email,
-  }));
+  try {
+    const res = await fetch(
+      'https://comments-api-strapi.onrender.com/api/users',
+    );
+
+    const jsonData = await res.json();
+
+    if (!Array.isArray(jsonData)) {
+      console.error('Forbidden or invalid response:', jsonData);
+      return;
+    }
+
+    users.value = jsonData.map((user) => ({
+      id: user.id,
+      username: user.username,
+      avatar: user.avatar,
+      email: user.email,
+    }));
+  } catch (err) {
+    console.error(err);
+  }
 };
 onMounted(fetchUsers);
-
 const currentUser = ref(
   JSON.parse(localStorage.getItem('currentUser')) || null,
 );
