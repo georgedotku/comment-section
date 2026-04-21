@@ -26,10 +26,11 @@
           <p class="font-medium">{{ comment.username }}</p>
           <span
             v-if="isReply && isOwner"
-            class="bg-black text-white text-[12px] px-2 py-0.5 rounded font-medium">
+            class="bg-black text-white h-6 w-8 text-center py-0.5 text-[12px] rounded font-medium">
             you
           </span>
-          <p class="text-muted-foreground font-medium opacity-30 mt-auto">
+          <p
+            class="text-muted-foreground text-[14px] font-medium opacity-30 mt-auto">
             {{ comment.time }}
           </p>
         </div>
