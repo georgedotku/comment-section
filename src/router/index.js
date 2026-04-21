@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import CommentPage from '../views/CommentPage.vue';
-import NotFound from '../views/NotFound.vue';
 
 const routes = [
   {
