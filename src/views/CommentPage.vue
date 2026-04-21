@@ -17,10 +17,7 @@ const selectedComment = ref(null);
 const showModal = ref(false);
 const showMenu = ref(false);
 
-const apiUrl =
-  import.meta.env.MODE === 'development'
-    ? 'http://localhost:1337/api/comments'
-    : 'https://comments-api-strapi.onrender.com/api/comments';
+const apiUrl = 'https://comments-api-strapi.onrender.com/api/comments';
 
 // const switchUser = (user) => {
 //   currentUser.value = user;
