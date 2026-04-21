@@ -201,7 +201,7 @@ const upVote = () => {
     delete votes.value[userId];
   } else if (current === 'down') {
     // switch
-    count.value += 2;
+    count.value += 1;
     votes.value[userId] = 'up';
   } else {
     // new vote
