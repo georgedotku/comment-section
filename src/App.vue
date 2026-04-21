@@ -12,9 +12,8 @@ import { ref, watch, onMounted } from 'vue';
 const users = ref([]);
 
 const fetchUsers = async () => {
-  const res = await fetch('http://localhost:1337/api/users');
+  const res = await fetch('https://comments-api-strapi.onrender.com/api/users');
   const jsonData = await res.json();
-
   users.value = jsonData.map((user) => ({
     id: user.id,
     username: user.username,
@@ -22,7 +21,6 @@ const fetchUsers = async () => {
     email: user.email,
   }));
 };
-
 onMounted(fetchUsers);
 
 const currentUser = ref(
@@ -36,7 +34,6 @@ watch(currentUser, (user) => {
     localStorage.removeItem('currentUser');
   }
 });
-
 const setUser = (user) => {
   currentUser.value = user;
 };
