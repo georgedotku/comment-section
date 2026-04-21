@@ -97,8 +97,13 @@
       <!-- Reply button -->
       <span
         v-else
-        @click="currentUser && toggleReply(comment)"
-        class="flex items-center w-fit gap-1 font-bold text-gray-500 absolute bottom-2 right-4 sm:bottom-auto sm:top-4 sm:mt-3 cursor-pointer">
+        @click="canReplyInThread(comment) && toggleReply(comment)"
+        :class="[
+          'flex items-center w-fit gap-1 font-bold text-gray-500 absolute bottom-2 right-4 sm:bottom-auto sm:top-4 sm:mt-3',
+          canReplyInThread(comment)
+            ? 'cursor-pointer'
+            : 'opacity-40 cursor-not-allowed',
+        ]">
         <Reply class="w-5 h-5" /> Reply
       </span>
     </div>
@@ -215,19 +220,13 @@ const downVote = () => {
   const userId = props.currentUser.id;
   const current = votes.value[userId];
 
-  if (current === 'down') {
-    // undo
-    count.value++;
-    delete votes.value[userId];
-  } else if (current === 'up') {
-    // switch
-    count.value -= 2;
-    votes.value[userId] = 'down';
-  } else {
-    // new vote
+  // only removes upvote
+  if (current === 'up') {
     count.value--;
-    votes.value[userId] = 'down';
+    delete votes.value[userId];
   }
+
+  // if already down or nothing → do nothing
 };
 const highlightMention = (text) => {
   if (!text) return '';
@@ -235,6 +234,25 @@ const highlightMention = (text) => {
     /@(\w+)/g,
     '<span class="text-blue-700 font-bold">@$1</span>',
   );
+};
+
+// REPLY
+const getMaxLevel = (comment) => {
+  let max = comment.level;
+
+  const traverse = (node) => {
+    node.replies?.forEach((child) => {
+      max = Math.max(max, child.level);
+      traverse(child);
+    });
+  };
+
+  traverse(comment);
+
+  return max;
+};
+const canReplyInThread = (comment) => {
+  return getMaxLevel(comment) < 2;
 };
 const toggleReply = (comment) => {
   if (isReplying.value) {
