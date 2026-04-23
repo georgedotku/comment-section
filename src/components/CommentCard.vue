@@ -290,12 +290,11 @@ const cancelEdit = () => {
 };
 const saveEdit = () => {
   if (!editText.value.trim()) return;
-
   emit('edit', {
     documentId: props.comment.documentId,
     content: editText.value,
+    parent_id: props.comment.parent_id,
   });
-
   isEditing.value = false;
 };
 const handleDelete = () => {

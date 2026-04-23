@@ -19,12 +19,6 @@ const showMenu = ref(false);
 
 const apiUrl = 'https://comments-api-strapi.onrender.com/api/comments';
 
-// const switchUser = (user) => {
-//   currentUser.value = user;
-//   localStorage.setItem('currentUser', JSON.stringify(user));
-//   showMenu.value = false;
-//   router.push({ name: 'comment', params: { id: user.id } });
-// };
 const commentTree = (data, parentId = null, level = 0) => {
   console.log('data:', data);
   return data
