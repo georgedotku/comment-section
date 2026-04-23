@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
 import { formatDistanceToNowStrict } from 'date-fns';
+
 const router = useRouter();
 const props = defineProps({
   id: String,
@@ -19,16 +20,31 @@ const showMenu = ref(false);
 
 const apiUrl = 'https://comments-api-strapi.onrender.com/api/comments';
 
-const commentTree = (data, parentId = null, level = 0) => {
-  console.log('data:', data);
-  return data
-    .filter((item) => item.parent_id === parentId)
-    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-    .map((item) => ({
-      ...item,
-      time: formatTime(item.created_at),
-      replies: commentTree(data, item.id), // recursion
-    }));
+// const commentTree = (data, parentId = null, level = 0) => {
+//   console.log('data:', data);
+//   return data
+//     .filter((item) => item.parent_id === parentId)
+//     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+//     .map((item) => ({
+//       ...item,
+//       time: formatTime(item.created_at),
+//       replies: commentTree(data, item.id), // recursion
+//     }));
+// };
+const commentTree = (list = []) => {
+  const map = new Map(
+    list.map((item) => [item.documentId, { ...item, replies: [] }]),
+  );
+  const roots = [];
+  for (const item of map.values()) {
+    const parent = map.get(item.parent_documentId);
+    if (parent) {
+      parent.replies.push(item);
+    } else {
+      roots.push(item);
+    }
+  }
+  return roots;
 };
 // const updateComment = (list, updated) => {
 //   return list.map((c) => {
@@ -49,26 +65,63 @@ const commentTree = (data, parentId = null, level = 0) => {
 
 // GET COMMENTS
 const fetchComments = async () => {
-  const res = await fetch(
-    `${apiUrl}?populate[author]=true&populate[parent]=true`,
-  );
-  const jsonData = await res.json();
-  const formatted = jsonData.data
-    .filter((item) => item.author)
-    .map((item) => ({
-      id: item.id,
-      documentId: item.documentId,
-      authorId: item.author.id,
-      username: item.author.username,
-      avatar: item.author.avatar,
-      content: item.content,
-      created_at: item.createdAt,
-      parent_id: item.parent?.id ?? item.parent?.data?.id ?? null,
-    }))
-    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-  console.log('formatted:', formatted);
-  comments.value = commentTree(formatted);
+  try {
+    const res = await fetch(`${apiUrl}?populate=*`);
+
+    const jsonData = await res.json();
+
+    if (!jsonData?.data) {
+      console.error('Invalid API response:', jsonData);
+      comments.value = [];
+      return;
+    }
+
+    const formatted = jsonData.data
+      .filter((item) => item.author)
+      .map((item) => ({
+        id: item.id,
+        documentId: item.documentId,
+        parent_documentId: item.parent_documentId ?? null,
+        authorId: item.author.id,
+        username: item.author.username,
+        avatar: item.author.avatar,
+        content: item.content,
+        created_at: item.createdAt,
+        parent_id: item.parent?.id ?? null,
+      }))
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    comments.value = commentTree(formatted);
+  } catch (err) {
+    console.error('Fetch failed:', err);
+    comments.value = [];
+  }
 };
+// const fetchComments = async () => {
+//   const res = await fetch(
+//     `${apiUrl}?populate[author]=*&populate[parent][populate][author]=*`,
+//   );
+//   const jsonData = await res.json();
+//   const formatted = jsonData.data
+//     .filter((item) => item.author)
+//     .map((item) => ({
+//       id: item.id,
+//       documentId: item.documentId,
+//       authorId: item.author.id,
+//       username: item.author.username,
+//       avatar: item.author.avatar,
+//       content: item.content,
+//       created_at: item.createdAt,
+//       parent_id:
+//         item.parent?.id ??
+//         item.parent?.data?.id ??
+//         item.parent?.documentId ??
+//         null,
+//     }))
+//     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+//   console.log('formatted:', formatted);
+//   comments.value = commentTree(formatted);
+// };
 onMounted(fetchComments);
 // ADD COMMENT
 const addComment = async (payload) => {
@@ -80,7 +133,7 @@ const addComment = async (payload) => {
     body: JSON.stringify({
       data: {
         content: payload.content,
-        parent: payload.parent_id || null,
+        parent_id: null,
         author: payload.author_id,
       },
     }),
@@ -95,24 +148,20 @@ const addComment = async (payload) => {
 
 // ADD REPLY
 const addReply = async (payload) => {
-  const res = await fetch(`${apiUrl}`, {
+  await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       data: {
         content: payload.content,
-        parent: payload.parent_id || null,
+        parent_documentId: payload.parent_documentId,
         author: payload.author_id,
       },
     }),
   });
-  if (res.ok) {
-    fetchComments();
-  } else {
-    console.error('Failed to add reply');
-  }
-};
 
+  await fetchComments();
+};
 // EDIT
 const editComment = async ({ id, documentId, content }) => {
   const res = await fetch(`${apiUrl}/${documentId}`, {

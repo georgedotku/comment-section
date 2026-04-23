@@ -266,20 +266,17 @@ const toggleReply = (comment) => {
     replyText.value = '';
     return;
   }
-
   isReplying.value = true;
   replyTo.value = comment.username;
   replyText.value = `@${comment.username} `;
 };
 const submitReply = () => {
   if (!replyText.value.trim()) return;
-
   emit('reply', {
     content: replyText.value,
-    parent_id: props.comment.id,
+    parent_documentId: props.comment.documentId,
     author_id: props.currentUser.id,
   });
-
   isReplying.value = false;
   replyTo.value = null;
   replyText.value = '';
@@ -297,7 +294,7 @@ const saveEdit = () => {
   emit('edit', {
     documentId: props.comment.documentId,
     content: editText.value,
-    parent_id: props.comment.parent_id,
+    parent_documentId: props.comment.documentId,
   });
   isEditing.value = false;
 };
