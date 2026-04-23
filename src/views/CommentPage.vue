@@ -22,14 +22,30 @@ const apiUrl = 'https://comments-api-strapi.onrender.com/api/comments';
 const commentTree = (data, parentId = null, level = 0) => {
   console.log('data:', data);
   return data
-    .filter((item) => String(item.parent_id) === String(parentId))
+    .filter((item) => item.parent_id === parentId)
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
     .map((item) => ({
       ...item,
-      level,
       time: formatTime(item.created_at),
-      replies: commentTree(data, item.id, level + 1), // recursion
+      replies: commentTree(data, item.id), // recursion
     }));
 };
+// const updateComment = (list, updated) => {
+//   return list.map((c) => {
+//     if (c.id === updated.id) {
+//       return { ...c, content: updated.content };
+//     }
+
+//     if (c.replies?.length) {
+//       return {
+//         ...c,
+//         replies: updateComment(c.replies, updated),
+//       };
+//     }
+
+//     return c;
+//   });
+// };
 
 // GET COMMENTS
 const fetchComments = async () => {
@@ -47,9 +63,10 @@ const fetchComments = async () => {
       avatar: item.author.avatar,
       content: item.content,
       created_at: item.createdAt,
-      parent_id: item.parent?.id ?? null,
+      parent_id: item.parent?.id ?? item.parent?.data?.id ?? null,
     }))
     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  console.log('formatted:', formatted);
   comments.value = commentTree(formatted);
 };
 onMounted(fetchComments);
@@ -108,7 +125,7 @@ const editComment = async ({ id, documentId, content }) => {
     }),
   });
   if (res.ok) {
-    fetchComments();
+    await fetchComments();
   } else {
     console.error('Failed to edit comment');
   }
@@ -159,6 +176,7 @@ const formatTime = (date) => {
       <CommentCard
         :comment="comment"
         :isReply="false"
+        :depth="0"
         :currentUser="props.currentUser"
         @openModal="toggleModal"
         @delete="deleteComment"

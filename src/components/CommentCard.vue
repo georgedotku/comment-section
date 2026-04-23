@@ -1,21 +1,21 @@
 <template>
   <div class="relative">
     <div
-      v-if="comment.level > 0"
+      v-if="depth > 0"
       class="absolute left-0 top-0 w-0.5 bg-black opacity-30"
       :style="{
         height: '100%',
-        left: `${(comment.level - 1) * 20}px`,
+        left: `${(depth - 1) * 20}px`,
       }"></div>
 
     <!-- Card -->
     <div
       class="bg-inherit h-50 p-4 relative rounded-lg ring-2 ring-gray-300 shadow-xl/30"
       :style="{
-        marginLeft: `${Math.min(comment.level, 3) * 20}px`,
-        width: `calc(100% - ${Math.min(comment.level, 3) * 20}px)`,
+        marginLeft: `${Math.min(depth, 3) * 20}px`,
+        width: `calc(100% - ${Math.min(depth, 3) * 20}px)`,
       }"
-      :class="isReply ? ' mt-3 w-[90%]' : 'w-full'">
+      :class="isReply ? ' mt-3' : ''">
       <!-- User Info -->
       <div class="flex sm:mx-10 items-center gap-3">
         <img
@@ -113,7 +113,10 @@
   <div
     v-if="isReplying"
     class="bg-inherit ring-2 ring-gray-300 shadow-xl/30 rounded-lg p-4 mt-4 ml-auto"
-    :class="[isReply ? 'w-[90%] ml-auto' : 'w-full']">
+    :style="{
+      marginLeft: `${Math.min(depth + 1, 3) * 20}px`,
+      width: `calc(100% - ${Math.min(depth + 1, 3) * 20}px)`,
+    }">
     <div class="flex items-center gap-3">
       <img
         :src="currentUser?.avatar"
@@ -143,6 +146,7 @@
       :comment="reply"
       :isReply="true"
       :currentUser="currentUser"
+      :depth="depth + 1"
       @openModal="$emit('openModal', $event)"
       @delete="$emit('delete', $event)"
       @edit="$emit('edit', $event)"
@@ -158,6 +162,10 @@ const props = defineProps({
   currentUser: Object,
   isReply: Boolean,
   replies: Array,
+  depth: {
+    type: Number,
+    default: 0,
+  },
 });
 defineOptions({
   name: 'CommentCard',
@@ -238,17 +246,13 @@ const highlightMention = (text) => {
 };
 
 // REPLY
-const getMaxLevel = (comment) => {
-  let max = comment.level;
+const getMaxLevel = (comment, currentDepth = props.depth) => {
+  let max = currentDepth;
 
-  const traverse = (node) => {
-    node.replies?.forEach((child) => {
-      max = Math.max(max, child.level);
-      traverse(child);
-    });
-  };
-
-  traverse(comment);
+  comment.replies?.forEach((child) => {
+    const childMax = getMaxLevel(child, currentDepth + 1);
+    max = Math.max(max, childMax);
+  });
 
   return max;
 };
@@ -291,9 +295,9 @@ const cancelEdit = () => {
 const saveEdit = () => {
   if (!editText.value.trim()) return;
   emit('edit', {
-    id: props.comment.id,
     documentId: props.comment.documentId,
     content: editText.value,
+    parent_id: props.comment.parent_id,
   });
   isEditing.value = false;
 };
