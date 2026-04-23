@@ -15,7 +15,7 @@
         marginLeft: `${Math.min(comment.level, 3) * 20}px`,
         width: `calc(100% - ${Math.min(comment.level, 3) * 20}px)`,
       }"
-      :class="isReply ? 'ml-auto mt-3 w-[90%]' : 'w-full'">
+      :class="isReply ? ' mt-3 w-[90%]' : 'w-full'">
       <!-- User Info -->
       <div class="flex sm:mx-10 items-center gap-3">
         <img
@@ -291,9 +291,9 @@ const cancelEdit = () => {
 const saveEdit = () => {
   if (!editText.value.trim()) return;
   emit('edit', {
+    id: props.comment.id,
     documentId: props.comment.documentId,
     content: editText.value,
-    parent_id: props.comment.parent_id,
   });
   isEditing.value = false;
 };

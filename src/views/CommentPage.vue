@@ -22,7 +22,7 @@ const apiUrl = 'https://comments-api-strapi.onrender.com/api/comments';
 const commentTree = (data, parentId = null, level = 0) => {
   console.log('data:', data);
   return data
-    .filter((item) => item.parent_id === parentId)
+    .filter((item) => String(item.parent_id) === String(parentId))
     .map((item) => ({
       ...item,
       level,
@@ -37,7 +37,6 @@ const fetchComments = async () => {
     `${apiUrl}?populate[author]=true&populate[parent]=true`,
   );
   const jsonData = await res.json();
-
   const formatted = jsonData.data
     .filter((item) => item.author)
     .map((item) => ({
@@ -48,9 +47,9 @@ const fetchComments = async () => {
       avatar: item.author.avatar,
       content: item.content,
       created_at: item.createdAt,
-      parent_id: item.parent?.id || null,
-    }));
-
+      parent_id: item.parent?.id ?? null,
+    }))
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
   comments.value = commentTree(formatted);
 };
 onMounted(fetchComments);
@@ -98,7 +97,7 @@ const addReply = async (payload) => {
 };
 
 // EDIT
-const editComment = async ({ documentId, content }) => {
+const editComment = async ({ id, documentId, content }) => {
   const res = await fetch(`${apiUrl}/${documentId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
