@@ -66,10 +66,12 @@ const commentTree = (list = []) => {
 // GET COMMENTS
 const fetchComments = async () => {
   try {
-    const res = await fetch(`${apiUrl}?populate=*`);
+    const res = await fetch(
+      `${apiUrl}?populate[author]=true&populate[parent]=true`,
+    );
 
     const jsonData = await res.json();
-
+    console.log('API response:', jsonData);
     if (!jsonData?.data) {
       console.error('Invalid API response:', jsonData);
       comments.value = [];
@@ -81,7 +83,7 @@ const fetchComments = async () => {
       .map((item) => ({
         id: item.id,
         documentId: item.documentId,
-        parent_documentId: item.parent_documentId ?? null,
+        parent_documentId: item.parent?.documentId ?? null,
         authorId: item.author.id,
         username: item.author.username,
         avatar: item.author.avatar,
@@ -89,7 +91,7 @@ const fetchComments = async () => {
         created_at: item.createdAt,
       }))
       .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-
+    console.log('formatted:', formatted);
     comments.value = commentTree(formatted);
   } catch (err) {
     console.error('Fetch failed:', err);
@@ -132,7 +134,7 @@ const addComment = async (payload) => {
     body: JSON.stringify({
       data: {
         content: payload.content,
-        parent_documentId: null,
+
         author: payload.author_id,
       },
     }),
@@ -153,7 +155,7 @@ const addReply = async (payload) => {
     body: JSON.stringify({
       data: {
         content: payload.content,
-        parent_documentId: payload.parent_documentId,
+        parent: payload.parent_documentId,
         author: payload.author_id,
       },
     }),
