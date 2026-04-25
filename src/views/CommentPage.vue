@@ -87,7 +87,6 @@ const fetchComments = async () => {
         avatar: item.author.avatar,
         content: item.content,
         created_at: item.createdAt,
-        parent_id: item.parent?.id ?? null,
       }))
       .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
@@ -133,7 +132,7 @@ const addComment = async (payload) => {
     body: JSON.stringify({
       data: {
         content: payload.content,
-        parent_id: null,
+        parent_documentId: null,
         author: payload.author_id,
       },
     }),

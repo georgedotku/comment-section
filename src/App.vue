@@ -6,24 +6,19 @@
       @selectUser="setUser($event)" />
   </div>
 </template>
-
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 const users = ref([]);
-
 const fetchUsers = async () => {
   try {
     const res = await fetch(
       'https://comments-api-strapi.onrender.com/api/users',
     );
-
     const jsonData = await res.json();
-
     if (!Array.isArray(jsonData)) {
       console.error('Forbidden or invalid response:', jsonData);
       return;
     }
-
     users.value = jsonData.map((user) => ({
       id: user.id,
       username: user.username,
@@ -38,7 +33,6 @@ onMounted(fetchUsers);
 const currentUser = ref(
   JSON.parse(localStorage.getItem('currentUser')) || null,
 );
-
 watch(currentUser, (user) => {
   if (user) {
     localStorage.setItem('currentUser', JSON.stringify(user));
