@@ -46,22 +46,6 @@ const commentTree = (list = []) => {
   }
   return roots;
 };
-// const updateComment = (list, updated) => {
-//   return list.map((c) => {
-//     if (c.id === updated.id) {
-//       return { ...c, content: updated.content };
-//     }
-
-//     if (c.replies?.length) {
-//       return {
-//         ...c,
-//         replies: updateComment(c.replies, updated),
-//       };
-//     }
-
-//     return c;
-//   });
-// };
 
 // GET COMMENTS
 const fetchComments = async () => {
@@ -89,6 +73,7 @@ const fetchComments = async () => {
         avatar: item.author.avatar,
         content: item.content,
         created_at: item.createdAt,
+        time: formatTime(item.createdAt),
       }))
       .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     console.log('formatted:', formatted);
@@ -98,31 +83,7 @@ const fetchComments = async () => {
     comments.value = [];
   }
 };
-// const fetchComments = async () => {
-//   const res = await fetch(
-//     `${apiUrl}?populate[author]=*&populate[parent][populate][author]=*`,
-//   );
-//   const jsonData = await res.json();
-//   const formatted = jsonData.data
-//     .filter((item) => item.author)
-//     .map((item) => ({
-//       id: item.id,
-//       documentId: item.documentId,
-//       authorId: item.author.id,
-//       username: item.author.username,
-//       avatar: item.author.avatar,
-//       content: item.content,
-//       created_at: item.createdAt,
-//       parent_id:
-//         item.parent?.id ??
-//         item.parent?.data?.id ??
-//         item.parent?.documentId ??
-//         null,
-//     }))
-//     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-//   console.log('formatted:', formatted);
-//   comments.value = commentTree(formatted);
-// };
+
 onMounted(fetchComments);
 // ADD COMMENT
 const addComment = async (payload) => {
@@ -134,7 +95,6 @@ const addComment = async (payload) => {
     body: JSON.stringify({
       data: {
         content: payload.content,
-
         author: payload.author_id,
       },
     }),
