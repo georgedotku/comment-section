@@ -20,17 +20,6 @@ const showMenu = ref(false);
 
 const apiUrl = 'https://comments-api-strapi.onrender.com/api/comments';
 
-// const commentTree = (data, parentId = null, level = 0) => {
-//   console.log('data:', data);
-//   return data
-//     .filter((item) => item.parent_id === parentId)
-//     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-//     .map((item) => ({
-//       ...item,
-//       time: formatTime(item.created_at),
-//       replies: commentTree(data, item.id), // recursion
-//     }));
-// };
 const commentTree = (list = []) => {
   const map = new Map(
     list.map((item) => [item.documentId, { ...item, replies: [] }]),
