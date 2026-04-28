@@ -42,7 +42,7 @@ const fetchComments = async () => {
     const res = await fetch(
       `${apiUrl}?populate[author]=true&populate[parent]=true`,
     );
-
+    console.log('Fetch response:', res);
     const jsonData = await res.json();
     console.log('API response:', jsonData);
     if (!jsonData?.data) {
