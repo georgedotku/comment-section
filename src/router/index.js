@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import CommentPage from '../views/CommentPage.vue';
-import SignUp from '../views/SignUp.vue';
 
 const routes = [
   {
@@ -9,11 +8,6 @@ const routes = [
     name: 'home',
     component: Home,
     props: true,
-  },
-  {
-    path: '/sign-up',
-    name: 'sign-up',
-    component: SignUp,
   },
   {
     path: '/comment/:id',
