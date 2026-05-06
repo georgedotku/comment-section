@@ -1,6 +1,8 @@
 <template>
   <div class="bg-[#E7EDE7] w-full min-h-screen">
-    <div v-if="loadingUsers" class="flex justify-center items-center h-screen">
+    <div
+      v-if="loadingUsers"
+      class="flex flex-col justify-center items-center h-screen">
       <div
         class="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-black"></div>
       <p class="ml-2">Loading...</p>
